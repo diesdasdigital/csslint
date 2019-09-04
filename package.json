@@ -7,10 +7,19 @@
 	"author": "diesdas.digital",
 	"license": "MIT",
 	"private": true,
-	"dependencies": {
-		"css-tree": "^1.0.0-alpha.34"
+	"scripts": {
+		"pre-push": "yarn -s lint",
+		"start": "node index.js",
+		"lint": "yarn run -s lint:formatting && yarn run -s lint:css && yarn run -s lint:js",
+		"lint:formatting": "echo 'formatting .js and .css files with prettier: ' && prettier 'src/**/*.{js,css}' --list-different && echo '✅'",
+		"lint:css": "echo 'linting .css files: ' && stylelint 'src/**/*.css' && echo '✅'",
+		"lint:js": "echo 'linting .js files: ' && eslint 'src/**/*.js' && echo '✅'"
 	},
+	"dependencies": {},
 	"devDependencies": {
+		"node": "^12.9.1",
+		"css-tree": "^1.0.0-alpha.34",
+		"captain-git-hook": "^2.0.0",
 		"eslint": "^5.16.0",
 		"prettier": "1.18.2",
 		"stylelint": "^10.0.1"
