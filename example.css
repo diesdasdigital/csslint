@@ -1,15 +1,15 @@
 #example__my-id-selector {
-  world: "!";
+	border: "1";
 }
 
 .example__my-class-selector {
-  world: "!";
+	border: "1";
 }
 
 .example__my-double-nested-class-selector__one__two {
-  world: "!";
+	border: "1";
 }
 
 .my-class-selector-which-does-not-have-file-name-as-prefix {
-  world: "!";
+	border: "1";
 }

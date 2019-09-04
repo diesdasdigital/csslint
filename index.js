@@ -4,7 +4,9 @@ const csstree = require("css-tree");
 
 function lint(filePath) {
 	fs.readFile(filePath, "utf8", (err, str) => {
-		if (err) throw err;
+		if (err) {
+			throw err;
+		}
 		const fileName = path.basename(filePath, ".css");
 		lintFile(fileName, str);
 	});
@@ -21,13 +23,13 @@ function lintFile(fileName, str) {
 			errorMessages.push(maybeErrorMessage);
 		}
 	};
-	csstree.walk(ast, function(node) {
+	csstree.walk(ast, node => {
 		addErrorMessage(checkIfUsesIdSelector(node));
 		addErrorMessage(checkIfHasDoubleNesting(node));
 		addErrorMessage(checkIfStartsWithFileName(fileName, node));
 	});
 
-	console.log(errorMessages);
+	console.warn(errorMessages);
 	// console.log(JSON.stringify(ast, null, 2));
 }
 

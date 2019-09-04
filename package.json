@@ -8,12 +8,11 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
-		"pre-push": "yarn -s lint",
 		"start": "node index.js",
 		"lint": "yarn run -s lint:formatting && yarn run -s lint:css && yarn run -s lint:js",
-		"lint:formatting": "echo 'formatting .js and .css files with prettier: ' && prettier 'src/**/*.{js,css}' --list-different && echo '✅'",
-		"lint:css": "echo 'linting .css files: ' && stylelint 'src/**/*.css' && echo '✅'",
-		"lint:js": "echo 'linting .js files: ' && eslint 'src/**/*.js' && echo '✅'"
+		"lint:formatting": "echo 'formatting .js and .css files with prettier: ' && prettier '**/*.{js,css}' --list-different && echo '✅'",
+		"lint:css": "echo 'linting .css files: ' && stylelint '**/*.css' && echo '✅'",
+		"lint:js": "echo 'linting .js files: ' && eslint '**/*.js' && echo '✅'"
 	},
 	"dependencies": {},
 	"devDependencies": {
