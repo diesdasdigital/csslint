@@ -1,0 +1,15 @@
+#example__my-id-selector {
+  world: "!";
+}
+
+.example__my-class-selector {
+  world: "!";
+}
+
+.example__my-double-nested-class-selector__one__two {
+  world: "!";
+}
+
+.my-class-selector-which-does-not-have-file-name-as-prefix {
+  world: "!";
+}
