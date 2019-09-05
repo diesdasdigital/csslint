@@ -1,4 +1,3 @@
-/*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 const fs = require("fs");
 const path = require("path");
 const csstree = require("css-tree");
