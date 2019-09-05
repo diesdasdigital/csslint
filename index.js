@@ -1,74 +1,60 @@
+/*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 const fs = require("fs");
 const path = require("path");
 const csstree = require("css-tree");
 
 function lint(filePath) {
-	fs.readFile(filePath, "utf8", (err, str) => {
-		if (err) {
-			throw err;
-		}
-		const fileName = path.basename(filePath, ".css");
-		lintFile(fileName, str);
-	});
+  fs.readFile(filePath, "utf8", (err, str) => {
+    if (err) {
+      throw err;
+    }
+    const fileName = path.basename(filePath, ".css");
+    lintFile(fileName, str);
+  });
 }
+
+const checkIfUsesIdSelector = node =>
+  node.type === "IdSelector"
+    ? `🔴 on line ${node.loc.start.line}: uses id selector: #${node.name}`
+    : "no error";
+
+const checkIfHasDoubleNesting = node => {
+  function hasDoubleNesting() {
+    const matches = node.name.match(/__/g);
+    return matches ? matches.length > 1 : false;
+  }
+  return node.type === "ClassSelector" && hasDoubleNesting()
+    ? `🔴 on line ${node.loc.start.line}: double nesting in class selector: .${node.name}`
+    : "no error";
+};
+
+const checkIfStartsWithFileName = (fileName, node) =>
+  node.type === "ClassSelector" && !node.name.startsWith(fileName)
+    ? `🔴 on line ${node.loc.start.line}: the class selector does not start with file name: .${node.name}`
+    : "no error";
 
 function lintFile(fileName, str) {
-	const ast = csstree.parse(str, {
-		positions: true
-	});
+  const ast = csstree.parse(str, {
+    positions: true
+  });
 
-	const errorMessages = [];
-	const addErrorMessage = maybeErrorMessage => {
-		if (maybeErrorMessage) {
-			errorMessages.push(maybeErrorMessage);
-		}
-	};
-	csstree.walk(ast, node => {
-		addErrorMessage(checkIfUsesIdSelector(node));
-		addErrorMessage(checkIfHasDoubleNesting(node));
-		addErrorMessage(checkIfStartsWithFileName(fileName, node));
-	});
+  const errorMessages = [];
+  const addErrorMessage = maybeErrorMessage => {
+    if (maybeErrorMessage !== "no error") {
+      errorMessages.push(maybeErrorMessage);
+    }
+  };
+  csstree.walk(ast, node => {
+    addErrorMessage(checkIfUsesIdSelector(node));
+    addErrorMessage(checkIfHasDoubleNesting(node));
+    addErrorMessage(checkIfStartsWithFileName(fileName, node));
+  });
 
-	console.warn(errorMessages);
-	// console.log(JSON.stringify(ast, null, 2));
-}
+  // eslint-disable-next-line no-console
+  errorMessages.map(msg => console.log(msg));
 
-function checkIfUsesIdSelector(node) {
-	if (node.type === "IdSelector") {
-		return (
-			"🔴 on line " +
-			node.loc.start.line +
-			": uses id selector: #" +
-			node.name
-		);
-	}
-}
-
-function checkIfHasDoubleNesting(node) {
-	if (node.type === "ClassSelector") {
-		const matches = node.name.match(/__/g);
-		const hasDoubleNesting = matches ? matches.length > 1 : false;
-		if (hasDoubleNesting) {
-			return (
-				"🔴 on line " +
-				node.loc.start.line +
-				": double nesting in class selector: ." +
-				node.name
-			);
-		}
-	}
-}
-function checkIfStartsWithFileName(fileName, node) {
-	if (node.type === "ClassSelector") {
-		if (!node.name.startsWith(fileName)) {
-			return (
-				"🔴 on line " +
-				node.loc.start.line +
-				": the class selector does not start with file name: ." +
-				node.name
-			);
-		}
-	}
+  // eslint-disable-next-line no-console
+  // console.log(JSON.stringify(ast, null, 2));
 }
 
 lint("example.css");
