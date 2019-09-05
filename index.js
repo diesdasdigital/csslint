@@ -2,6 +2,11 @@ const fs = require("fs");
 const path = require("path");
 const csstree = require("css-tree");
 
+// eslint-disable-next-line no-console
+const filePathArgument = process.argv[2] ? process.argv[2] : "example.css";
+
+lint(filePathArgument);
+
 function lint(filePath) {
   fs.readFile(filePath, "utf8", (err, str) => {
     if (err) {
@@ -43,6 +48,7 @@ function lintFile(fileName, str) {
       errorMessages.push(maybeErrorMessage);
     }
   };
+
   csstree.walk(ast, node => {
     addErrorMessage(checkIfUsesIdSelector(node));
     addErrorMessage(checkIfHasDoubleNesting(node));
@@ -55,5 +61,3 @@ function lintFile(fileName, str) {
   // eslint-disable-next-line no-console
   // console.log(JSON.stringify(ast, null, 2));
 }
-
-lint("example.css");
