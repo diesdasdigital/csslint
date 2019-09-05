@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"description": "Linter for our CSS architecture",
 	"main": "index.js",
-	"repository": "todo",
+	"repository": "https://github.com/diesdasdigital/lint-css",
 	"author": "diesdas.digital",
-	"license": "MIT",
+	"license": "none",
 	"private": true,
 	"scripts": {
 		"pre-push": "yarn -s lint",
