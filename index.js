@@ -12,21 +12,29 @@ function lint(filePath) {
     if (err) {
       throw err;
     }
+
     const fileName = path.basename(filePath, ".css");
-    lintFile(fileName, str);
+
+    const lintErrors = findLintErrors(fileName, str);
+
+    lintErrors.map(msg => console.log(msg));
+
+    if (lintErrors.length > 0) {
+      process.exit(1);
+    }
   });
 }
 
-function lintFile(fileName, str) {
+function findLintErrors(fileName, str) {
   const ast = csstree.parse(str, {
     positions: true
   });
 
-  const errorMessages = [];
+  const lintErrors = [];
 
   const addErrorMessage = maybeErrorMessage => {
     if (maybeErrorMessage !== "no error") {
-      errorMessages.push(maybeErrorMessage);
+      lintErrors.push(maybeErrorMessage);
     }
   };
 
@@ -38,7 +46,7 @@ function lintFile(fileName, str) {
   });
 
   // eslint-disable-next-line no-console
-  errorMessages.map(msg => console.log(msg));
+  return lintErrors;
 
   // eslint-disable-next-line no-console
   // console.log(JSON.stringify(ast, null, 2));
