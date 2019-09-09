@@ -14,12 +14,16 @@
   border: "1";
 }
 
+ul > li {
+  border: "1";
+}
+
 @keyframes my-animation-name-which-does-not-start-with-a-class-name {
   from {
-    background-color: red;
+    border: "1";
   }
 
   to {
-    background-color: blue;
+    border: "1";
   }
 }
