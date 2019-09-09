@@ -13,3 +13,13 @@
 .my-class-selector-which-does-not-have-file-name-as-prefix {
   border: "1";
 }
+
+@keyframes my-animation-name-which-does-not-start-with-a-class-name {
+  from {
+    background-color: red;
+  }
+
+  to {
+    background-color: blue;
+  }
+}

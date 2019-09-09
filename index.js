@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const csstree = require("css-tree");
+const colors = require("colors/safe");
 
-// eslint-disable-next-line no-console
 const filePathArgument = process.argv[2] ? process.argv[2] : "example.css";
 
 lint(filePathArgument);
@@ -17,15 +17,13 @@ function lint(filePath) {
   });
 }
 
-/* 
-    
-*/
 function lintFile(fileName, str) {
   const ast = csstree.parse(str, {
     positions: true
   });
 
   const errorMessages = [];
+
   const addErrorMessage = maybeErrorMessage => {
     if (maybeErrorMessage !== "no error") {
       errorMessages.push(maybeErrorMessage);
@@ -34,8 +32,9 @@ function lintFile(fileName, str) {
 
   csstree.walk(ast, node => {
     addErrorMessage(checkIfUsesIdSelector(node));
-    addErrorMessage(checkIfHasDoubleNesting(node));
-    addErrorMessage(checkIfStartsWithFileName(fileName, node));
+    addErrorMessage(checkIfNestedMoreThanOnce(node));
+    addErrorMessage(checkIfStartsWithComponentName(fileName, node));
+    addErrorMessage(checkIfAnimationStartsWithComponentName(fileName, node));
   });
 
   // eslint-disable-next-line no-console
@@ -45,45 +44,116 @@ function lintFile(fileName, str) {
   // console.log(JSON.stringify(ast, null, 2));
 }
 
-// ------ EACH FUNCTION BELOW CHECKS A RULE
+// EACH FUNCTION BELOW CHECKS A RULE:
 
 /* 
     Id selectors are not allowed.
 */
 function checkIfUsesIdSelector(node) {
-  return node.type === "IdSelector"
-    ? `🔴 on line ${node.loc.start.line}: uses id selector: #${node.name}`
-    : "no error";
+  if (node.type === "IdSelector") {
+    return `🔴 on line ${node.loc.start.line}: 
+      There is an id selector: 
+        ${colors.red(node.name)}.
+      Id selectors are not allowed.`;
+  }
+
+  return "no error";
 }
 
 /* 
     Nesting elements to blocks is not allowed.
     For example, the class name ".block__one__two" is ill-formed.
 */
-function checkIfHasDoubleNesting(node) {
-  function hasDoubleNesting() {
-    const matches = node.name.match(/__/g);
-    return matches ? matches.length > 1 : false;
+function checkIfNestedMoreThanOnce(node) {
+  if (
+    node.type === "ClassSelector" &&
+    containsDoubleLowDashMoreThanOnce(node.name)
+  ) {
+    return `🔴 on line ${node.loc.start.line}: 
+      The class name
+        ${colors.red(node.name)}.
+      is nested more than once`;
   }
 
-  return node.type === "ClassSelector" && hasDoubleNesting()
-    ? `🔴 on line ${node.loc.start.line}: double nesting in class selector: .${node.name}`
-    : "no error";
+  return "no error";
 }
 
 /* 
     Class names should start with file name.
     For example, every class name in the file "SearchField.css" should start with "search-field"
 */
-function checkIfStartsWithFileName(fileName, node) {
-  const camelCaseToDashes = str =>
-    str
-      .split(/(?=[A-Z])/)
-      .join("_")
-      .toLowerCase();
+function checkIfStartsWithComponentName(fileName, node) {
+  const componentName = toComponentName(fileName);
 
-  return node.type === "ClassSelector" &&
-    !node.name.startsWith(camelCaseToDashes(fileName))
-    ? `🔴 on line ${node.loc.start.line}: the class selector does not start with file name: .${node.name}`
-    : "no error";
+  if (
+    node.type === "ClassSelector" &&
+    node.name !== componentName &&
+    !node.name.startsWith(`${componentName}__`)
+  ) {
+    return `🔴 on line ${node.loc.start.line}: 
+      The class name 
+        ${colors.red(node.name)}
+      does not start with the component name.
+      The name of the file is ${colors.blue(fileName)}.
+      Your class names which differ from ${colors.blue(
+        componentName
+      )} should start with ${colors.blue(`${componentName}__`)}.
+      Renaming your class as
+        ${colors.green(`${componentName}__${node.name}`)} 
+      would solve the problem.`;
+  }
+
+  return "no error";
+}
+
+/* 
+    Animation names start with the component name.
+    For example, every animation name in the file "SearchField.css" should start with "search-field__"
+*/
+function checkIfAnimationStartsWithComponentName(fileName, node) {
+  const componentName = toComponentName(fileName);
+
+  if (node.type === "Atrule" && node.name === "keyframes") {
+    const animationName = node.prelude.children.first().name;
+
+    if (!animationName.startsWith(`${componentName}__`)) {
+      return `🔴 on line ${node.loc.start.line}: 
+      The animation name 
+        ${colors.red(animationName)}
+      does not start with the component name.
+      The name of the file is ${colors.blue(fileName)}.
+      Your animation names should start with ${colors.blue(
+        `${componentName}__`
+      )}.
+      Renaming your animation as
+        ${colors.green(`${componentName}__${animationName}`)} 
+      would solve the problem.`;
+    }
+  }
+
+  return "no error";
+}
+
+//  HELPERS:
+
+/* 
+  Takes the file name (which is written with CamelCase) 
+    and turns it into the component name which is lowercase and separated by dashes.
+  For example, if the files name is "SearchField.css" then the component name is "search-field".
+*/
+function toComponentName(fileName) {
+  return fileName
+    .split(/(?=[A-Z])/)
+    .join("_")
+    .toLowerCase();
+}
+
+/*
+  Takes a string and returns `true` if it contains the substring "__" more than once.
+  Otherwise it returns `false`.
+*/
+function containsDoubleLowDashMoreThanOnce(nodeName) {
+  const matches = nodeName.match(/__/g);
+
+  return matches ? matches.length > 1 : false;
 }

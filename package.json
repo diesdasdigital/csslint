@@ -15,7 +15,9 @@
 		"lint:css": "echo 'linting .css files: ' && stylelint '**/*.css' && echo '✅'",
 		"lint:js": "echo 'linting .js files: ' && eslint '**/*.js' && echo '✅'"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"colors": "^1.3.3"
+	},
 	"devDependencies": {
 		"captain-git-hook": "^2.0.0",
 		"css-tree": "^1.0.0-alpha.34",
