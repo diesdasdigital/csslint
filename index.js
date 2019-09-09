@@ -17,6 +17,7 @@ function lint(filePath) {
 
     const lintErrors = findLintErrors(fileName, str);
 
+    // eslint-disable-next-line no-console
     lintErrors.map(msg => console.log(msg));
 
     if (lintErrors.length > 0) {
@@ -29,6 +30,9 @@ function findLintErrors(fileName, str) {
   const ast = csstree.parse(str, {
     positions: true
   });
+
+  // eslint-disable-next-line no-console
+  // console.log(JSON.stringify(ast, null, 2));
 
   const lintErrors = [];
 
@@ -47,9 +51,6 @@ function findLintErrors(fileName, str) {
 
   // eslint-disable-next-line no-console
   return lintErrors;
-
-  // eslint-disable-next-line no-console
-  // console.log(JSON.stringify(ast, null, 2));
 }
 
 // EACH FUNCTION BELOW CHECKS A RULE:
