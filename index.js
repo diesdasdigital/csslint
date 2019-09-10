@@ -32,7 +32,7 @@ function findLintErrors(fileName, str) {
   });
 
   // eslint-disable-next-line no-console
-  // console.log(JSON.stringify(ast, null, 2));
+  console.log(JSON.stringify(ast, null, 2));
 
   const lintErrors = [];
 
@@ -42,11 +42,12 @@ function findLintErrors(fileName, str) {
     }
   };
 
-  csstree.walk(ast, node => {
+  csstree.walk(ast, (node, item, list) => {
     addErrorMessage(checkIfUsesIdSelector(node));
     addErrorMessage(checkIfNestedMoreThanOnce(node));
     addErrorMessage(checkIfStartsWithComponentName(fileName, node));
     addErrorMessage(checkIfAnimationStartsWithComponentName(fileName, node));
+    addErrorMessage(checkIfHasATypeSelectorUsedInAWrongWay(node, item));
   });
 
   // eslint-disable-next-line no-console
@@ -138,6 +139,26 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
         ${colors.green(`${componentName}__${animationName}`)} 
       would solve the problem.`;
     }
+  }
+
+  return "no error";
+}
+
+/* 
+    Type selectors (like "div", "ul", "li", ...) are only allowed 
+      if they appear on the right hand side of a child combinator (like "my--form__list > li")
+*/
+function checkIfHasATypeSelectorUsedInAWrongWay(node, item) {
+  if (
+    node.type === "TypeSelector" &&
+    (!item.prev ||
+      (item.prev &&
+        !(item.prev.data.type === "Combinator" && item.prev.data.name === ">")))
+  ) {
+    return `🔴 on line ${node.loc.start.line}:
+      I see the type selector ${colors.red(node.name)}.
+      Type selectors are only allowed if they appear on the right hand side of a child combinator.
+      For example, like ${colors.green(`... > ${node.name}`)}`;
   }
 
   return "no error";

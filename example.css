@@ -1,4 +1,6 @@
-/* Each of the following should throw an error. */
+/* 
+    Each of the following should throw an error. 
+*/
 
 div {
   border: "1";
@@ -34,7 +36,10 @@ ul > li {
   }
 }
 
-/* The following is ok and should not be considered as error. */
+/* 
+    The following are OK. 
+    And should not be considered as error. 
+*/
 
 .example__list {
   border: "1";
