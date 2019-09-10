@@ -32,7 +32,7 @@ function findLintErrors(fileName, str) {
   });
 
   // eslint-disable-next-line no-console
-  console.log(JSON.stringify(ast, null, 2));
+  // console.log(JSON.stringify(ast, null, 2));
 
   const lintErrors = [];
 
@@ -42,7 +42,7 @@ function findLintErrors(fileName, str) {
     }
   };
 
-  csstree.walk(ast, (node, item, list) => {
+  csstree.walk(ast, (node, item) => {
     addErrorMessage(checkIfUsesIdSelector(node));
     addErrorMessage(checkIfNestedMoreThanOnce(node));
     addErrorMessage(checkIfStartsWithComponentName(fileName, node));
