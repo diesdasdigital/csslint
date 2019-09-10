@@ -2,19 +2,20 @@
 
 Linter for our CSS architecture
 
-### checks:
+### Css rules it checks:
 
 - [x] file name is used on every class as a prefix
 - [x] doesn’t use ids (`#name`)
 - [x] doesn’t have double nesting, eg `.component__one__two`
 - [x] show the line of the file which caused the error
-- [ ] doesn’t use tags (or only `> tag`)
-- [ ] uses double underscore for element classes `__`
+- [x] uses double underscore for element classes `__`
+- [x] animation names should start with the component name: `@keyframes my-component__animate-something {`
+- [x] doesn’t use tags (or only `> tag`)
 
-### general:
+### General requirements:
 
+- [x] should exit with an error code if there is an error (`exit 1`)
 - [ ] use [node-glob](https://github.com/isaacs/node-glob)
-- [ ] should exit with an error code if there is an error (`exit 1`)
 - [ ] publish as npm package
 
 ---
