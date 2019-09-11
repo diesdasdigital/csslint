@@ -31,7 +31,7 @@ function findLintErrors(fileName, str) {
     positions: true
   });
 
-  // eslint-disable-next-line no-console
+  // eslint-disable-next-line no-console, no-magic-numbers
   console.log(JSON.stringify(ast, null, 2));
 
   const lintErrors = [];
@@ -43,6 +43,7 @@ function findLintErrors(fileName, str) {
   }
 
   csstree.walk(ast, function(node, item) {
+    // eslint-disable-next-line no-invalid-this
     const nodeContext = this;
 
     addErrorMessage(checkIfUsesIdSelector(node));
