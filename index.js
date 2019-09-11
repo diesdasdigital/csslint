@@ -32,22 +32,26 @@ function findLintErrors(fileName, str) {
   });
 
   // eslint-disable-next-line no-console
-  // console.log(JSON.stringify(ast, null, 2));
+  console.log(JSON.stringify(ast, null, 2));
 
   const lintErrors = [];
 
-  const addErrorMessage = maybeErrorMessage => {
+  function addErrorMessage(maybeErrorMessage) {
     if (maybeErrorMessage !== "no error") {
       lintErrors.push(maybeErrorMessage);
     }
-  };
+  }
 
-  csstree.walk(ast, (node, item) => {
+  csstree.walk(ast, function(node, item) {
+    const nodeContext = this;
+
     addErrorMessage(checkIfUsesIdSelector(node));
     addErrorMessage(checkIfNestedMoreThanOnce(node));
     addErrorMessage(checkIfStartsWithComponentName(fileName, node));
     addErrorMessage(checkIfAnimationStartsWithComponentName(fileName, node));
-    addErrorMessage(checkIfHasATypeSelectorUsedInAWrongWay(node, item));
+    addErrorMessage(
+      checkIfHasATypeSelectorUsedInAWrongWay(nodeContext, node, item)
+    );
   });
 
   // eslint-disable-next-line no-console
@@ -148,9 +152,10 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
     Type selectors (like "div", "ul", "li", ...) are only allowed 
       if they appear on the right hand side of a child combinator (like "my--form__list > li")
 */
-function checkIfHasATypeSelectorUsedInAWrongWay(node, item) {
+function checkIfHasATypeSelectorUsedInAWrongWay(nodeContext, node, item) {
   if (
     node.type === "TypeSelector" &&
+    nodeContext.atrule === null &&
     (!item.prev ||
       (item.prev &&
         !(item.prev.data.type === "Combinator" && item.prev.data.name === ">")))
