@@ -95,7 +95,7 @@ function checkIfUsesIdSelector(node) {
   if (node.type === "IdSelector") {
     return `🔴 on line ${node.loc.start.line}: 
       There is an id selector: 
-        ${colors.red(node.name)}
+        ${colors.red(`#${node.name}`)}
       Id selectors are not allowed.`;
   }
 
@@ -113,7 +113,7 @@ function checkIfNestedMoreThanOnce(node) {
   ) {
     return `🔴 on line ${node.loc.start.line}: 
       The class name
-        ${colors.red(node.name)}
+        ${colors.red(`.${node.name}`)}
       is nested more than once`;
   }
 
@@ -141,7 +141,7 @@ function checkIfStartsWithComponentName(fileName, node) {
         componentName
       )} should start with ${colors.blue(`${componentName}__`)}.
       Renaming your class as
-        ${colors.green(`${componentName}__${node.name}`)} 
+        ${colors.green(`.${componentName}__${node.name}`)} 
       would solve the problem.`;
   }
 
