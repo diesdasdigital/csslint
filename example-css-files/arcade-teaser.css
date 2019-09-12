@@ -1,0 +1,118 @@
+.arcade-teaser {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 47px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.arcade-teaser__header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.arcade-teaser__copy {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+@media screen and (min-width: 768px) {
+  .arcade-teaser__copy {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.arcade-teaser__title {
+  font-family: var(--ff-futura);
+  font-size: 36px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+@media screen and (min-width: 768px) {
+  .arcade-teaser__title {
+    font-size: 68px;
+  }
+}
+
+.arcade-teaser__content {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  flex: 0 0 100%;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.arcade-teaser__video-container {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  overflow: hidden;
+  flex: none;
+  z-index: 1;
+  order: 0;
+}
+
+@media screen and (min-width: 1024px) {
+  .arcade-teaser__video-container {
+    width: 33%;
+    flex: 0 0 33%;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+}
+
+.arcade-teaser__video-container::after {
+  content: "";
+  padding-bottom: 72%;
+  display: block;
+}
+
+.arcade-teaser__video {
+  width: auto;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  position: absolute;
+}
+
+.arcade-teaser__teaser {
+  display: flex;
+  position: relative;
+  text-align: left;
+  min-width: 272px;
+  max-width: 272px;
+  height: 357px;
+  flex: 0 0 80%;
+}
+
+@media screen and (min-width: 768px) {
+  .arcade-teaser__teaser {
+    min-width: 312px;
+    max-width: 312px;
+    height: 282px;
+  }
+}
+
+.arcade-teaser__button-container {
+  flex: 0 0 100%;
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+  transform: translateY(-30px);
+}
+
+@media screen and (min-width: 768px) {
+  .arcade-teaser__button-container {
+    margin-top: -40px;
+    transform: none;
+  }
+}
