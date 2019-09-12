@@ -141,10 +141,7 @@ function checkIfStartsWithComponentName(fileName, node) {
       The name of the file is ${colors.blue(fileName)}.
       Your class names which differ from ${colors.blue(
         componentName
-      )} should start with ${colors.blue(`${componentName}__`)}.
-      Renaming your class as
-        ${colors.green(`.${componentName}__${node.name}`)}
-      would solve the problem.`;
+      )} should start with ${colors.blue(`${componentName}__`)}`;
   }
 
   return "no error";
@@ -168,10 +165,7 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
       The name of the file is ${colors.blue(fileName)}.
       Your animation names should start with ${colors.blue(
         `${componentName}__`
-      )}.
-      Renaming your animation as
-        ${colors.green(`${componentName}__${animationName}`)}
-      would solve the problem.`;
+      )}`;
     }
   }
 
