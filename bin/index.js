@@ -88,13 +88,13 @@ function findLintErrors(fileName, str) {
 
 // EACH FUNCTION BELOW CHECKS A RULE:
 
-/* 
+/*
     Id selectors are not allowed.
 */
 function checkIfUsesIdSelector(node) {
   if (node.type === "IdSelector") {
-    return `🔴 on line ${node.loc.start.line}: 
-      There is an id selector: 
+    return `🔴 on line ${node.loc.start.line}:
+      There is an id selector:
         ${colors.red(`#${node.name}`)}
       Id selectors are not allowed.`;
   }
@@ -102,7 +102,7 @@ function checkIfUsesIdSelector(node) {
   return "no error";
 }
 
-/* 
+/*
     Nesting elements to blocks is not allowed.
     For example, the class name ".block__one__two" is ill-formed.
 */
@@ -111,7 +111,7 @@ function checkIfNestedMoreThanOnce(node) {
     node.type === "ClassSelector" &&
     containsDoubleLowDashMoreThanOnce(node.name)
   ) {
-    return `🔴 on line ${node.loc.start.line}: 
+    return `🔴 on line ${node.loc.start.line}:
       The class name
         ${colors.red(`.${node.name}`)}
       is nested more than once`;
@@ -120,7 +120,7 @@ function checkIfNestedMoreThanOnce(node) {
   return "no error";
 }
 
-/* 
+/*
     Class names should start with file name.
     For example, every class name in the file "SearchField.css" should start with "search-field"
 */
@@ -132,8 +132,8 @@ function checkIfStartsWithComponentName(fileName, node) {
     node.name !== componentName &&
     !node.name.startsWith(`${componentName}__`)
   ) {
-    return `🔴 on line ${node.loc.start.line}: 
-      The class name 
+    return `🔴 on line ${node.loc.start.line}:
+      The class name
         ${colors.red(`.${node.name}`)}
       does not start with the component name.
       The name of the file is ${colors.blue(fileName)}.
@@ -141,14 +141,14 @@ function checkIfStartsWithComponentName(fileName, node) {
         componentName
       )} should start with ${colors.blue(`${componentName}__`)}.
       Renaming your class as
-        ${colors.green(`.${componentName}__${node.name}`)} 
+        ${colors.green(`.${componentName}__${node.name}`)}
       would solve the problem.`;
   }
 
   return "no error";
 }
 
-/* 
+/*
     Animation names start with the component name.
     For example, every animation name in the file "SearchField.css" should start with "search-field__"
 */
@@ -159,8 +159,8 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
     const animationName = node.prelude.children.first().name;
 
     if (!animationName.startsWith(`${componentName}__`)) {
-      return `🔴 on line ${node.loc.start.line}: 
-      The animation name 
+      return `🔴 on line ${node.loc.start.line}:
+      The animation name
         ${colors.red(animationName)}
       does not start with the component name.
       The name of the file is ${colors.blue(fileName)}.
@@ -168,7 +168,7 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
         `${componentName}__`
       )}.
       Renaming your animation as
-        ${colors.green(`${componentName}__${animationName}`)} 
+        ${colors.green(`${componentName}__${animationName}`)}
       would solve the problem.`;
     }
   }
@@ -176,8 +176,8 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
   return "no error";
 }
 
-/* 
-    Type selectors (like "div", "ul", "li", ...) are only allowed 
+/*
+    Type selectors (like "div", "ul", "li", ...) are only allowed
       if they appear on the right hand side of a child combinator (like "my--form__list > li")
 */
 function checkIfHasATypeSelectorUsedInAWrongWay(nodeContext, node, item) {
@@ -199,8 +199,8 @@ function checkIfHasATypeSelectorUsedInAWrongWay(nodeContext, node, item) {
 
 //  HELPERS:
 
-/* 
-  Takes the file name (which is written with CamelCase) 
+/*
+  Takes the file name (which is written with CamelCase)
     and turns it into the component name which is lowercase and separated by dashes.
   For example, if the files name is "SearchField.css" then the component name is "search-field".
 */
