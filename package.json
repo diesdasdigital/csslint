@@ -1,5 +1,5 @@
 {
-  "name": "csslint",
+  "name": "@diesdasdigital/csslint",
   "version": "1.0.0",
   "description": "Linter for our CSS architecture",
   "main": "./bin/index.js",
