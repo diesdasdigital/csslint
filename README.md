@@ -1,4 +1,4 @@
-# lint-css
+# csslint
 
 Linter for our CSS architecture
 
