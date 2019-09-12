@@ -41,6 +41,10 @@ ul > li {
     And should not be considered as error. 
 */
 
+.example--light-pink {
+  border: "1";
+}
+
 .example__list {
   border: "1";
 }

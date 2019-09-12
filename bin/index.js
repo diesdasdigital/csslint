@@ -132,6 +132,7 @@ function checkIfStartsWithComponentName(fileName, node) {
   if (
     node.type === "ClassSelector" &&
     node.name !== componentName &&
+    !node.name.startsWith(`${componentName}--`) &&
     !node.name.startsWith(`${componentName}__`)
   ) {
     return `🔴 on line ${node.loc.start.line}:
