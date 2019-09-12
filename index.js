@@ -43,6 +43,7 @@ ${colors.underline.red(`${lintErrors.length} errors in file ${filePath}`)}:
 
       process.exit(1);
     } else {
+      // eslint-disable-next-line no-console
       console.log(`No errors in file ${colors.green(filePath)}`);
     }
   });
