@@ -1,0 +1,19 @@
+name: CI
+
+on: pull_request
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checking out git
+        uses: actions/checkout@v1
+      - name: Setting up node
+        uses: actions/setup-node@v1
+      - name: Lint
+        env:
+          CI: true
+        run: |
+          yarn
+          yarn lint
