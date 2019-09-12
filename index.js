@@ -2,10 +2,19 @@ const fs = require("fs");
 const path = require("path");
 const csstree = require("css-tree");
 const colors = require("colors/safe");
+const glob = require("glob");
 
-const filePathArgument = process.argv[2] ? process.argv[2] : "example.css";
+// the argument is a glob pattern
+const arg = process.argv[2] ? process.argv[2] : "**/*.css";
 
-lint(filePathArgument);
+glob(arg, null, (err, matchedFilePaths) => {
+  if (err) {
+    throw err;
+  }
+  for (const filePath of matchedFilePaths) {
+    lint(filePath);
+  }
+});
 
 function lint(filePath) {
   fs.readFile(filePath, "utf8", (err, str) => {
@@ -17,10 +26,21 @@ function lint(filePath) {
 
     const lintErrors = findLintErrors(fileName, str);
 
-    // eslint-disable-next-line no-console
-    lintErrors.map(msg => console.log(msg));
-
     if (lintErrors.length > 0) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `
+I tried to lint the file ${colors.red(
+          filePath
+        )} and found the following ${colors.red(`${lintErrors.length} errors`)}:
+        `
+      );
+
+      for (const lintError of lintErrors) {
+        // eslint-disable-next-line no-console
+        console.log(lintError);
+      }
+
       process.exit(1);
     }
   });
@@ -32,7 +52,7 @@ function findLintErrors(fileName, str) {
   });
 
   // eslint-disable-next-line no-console, no-magic-numbers
-  console.log(JSON.stringify(ast, null, 2));
+  // console.log(JSON.stringify(ast, null, 2));
 
   const lintErrors = [];
 
