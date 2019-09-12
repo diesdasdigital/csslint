@@ -5,9 +5,11 @@ const colors = require("colors/safe");
 const glob = require("glob");
 
 // the argument is a glob pattern
-const arg = process.argv[2] ? process.argv[2] : "**/*.css";
+const firstArgumentInCommandLine = process.argv[2]
+  ? process.argv[2]
+  : "**/*.css";
 
-glob(arg, null, (err, matchedFilePaths) => {
+glob(firstArgumentInCommandLine, null, (err, matchedFilePaths) => {
   if (err) {
     throw err;
   }
@@ -30,9 +32,7 @@ function lint(filePath) {
       // eslint-disable-next-line no-console
       console.log(
         `
-I tried to lint the file ${colors.red(
-          filePath
-        )} and found the following ${colors.red(`${lintErrors.length} errors`)}:
+${colors.underline.red(`${lintErrors.length} errors in file ${filePath}`)}:
         `
       );
 
@@ -42,6 +42,8 @@ I tried to lint the file ${colors.red(
       }
 
       process.exit(1);
+    } else {
+      console.log(`No errors in file ${colors.green(filePath)}`);
     }
   });
 }

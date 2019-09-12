@@ -1,0 +1,52 @@
+.country-switcher {
+  position: relative;
+  align-self: flex-start;
+  width: 100%;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  color: #1a1919;
+}
+
+.country-switcher__select {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  border: 1px solid #737477;
+  border-radius: 6px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2213%22 height=%227%22 viewBox=%220 0 13 7%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cpath d=%22M18-9v24H-6V-9%22/%3E%3Cpath fill=%22%231A1919%22 fill-rule=%22nonzero%22 d=%22M6.865 6.86l5.98-5.686A.457.457 0 0 0 13 .833a.457.457 0 0 0-.156-.342l-.36-.35a.544.544 0 0 0-.729 0l-5.26 4.993L1.245.14a.544.544 0 0 0-.73 0l-.36.351A.457.457 0 0 0 0 .833c0 .129.056.253.156.341l5.98 5.686a.544.544 0 0 0 .729 0z%22/%3E%3C/g%3E%3C/svg%3E");
+  background-position: center right;
+  background-origin: content-box;
+  background-repeat: no-repeat;
+  color: #1a1919;
+}
+
+html[dir="rtl"] .country-switcher__select {
+  padding: 14px 48px 14px 16px;
+  background-position: center left;
+}
+
+.country-switcher__flag {
+  position: absolute;
+  left: 32px;
+  bottom: 16px;
+  width: auto;
+  height: 16px;
+}
+
+html[dir="rtl"] .country-switcher__flag {
+  left: auto;
+  right: 32px;
+}
+
+.country-switcher select::-ms-expand {
+  display: none;
+}
+
+@media screen and (min-width: 650px) {
+  .country-switcher {
+    width: 300px;
+  }
+}
