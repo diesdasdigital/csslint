@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "Linter for our CSS architecture",
 	"main": "index.js",
-	"repository": "https://github.com/diesdasdigital/lint-css",
+	"repository": "https://github.com/diesdasdigital/csslint",
 	"author": "diesdas.digital",
 	"license": "none",
 	"private": true,

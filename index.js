@@ -4,6 +4,9 @@ const csstree = require("css-tree");
 const colors = require("colors/safe");
 const glob = require("glob");
 
+// constants
+const regexForDoubleLowDash = /__/g;
+
 // the argument is a glob pattern
 const firstArgumentInCommandLine = process.argv[2]
   ? process.argv[2]
@@ -30,7 +33,7 @@ function lint(filePath) {
 
     if (lintErrors.length > 0) {
       // eslint-disable-next-line no-console
-      console.log(
+      console.error(
         `
 ${colors.underline.red(`${lintErrors.length} errors in file ${filePath}`)}:
         `
@@ -38,7 +41,7 @@ ${colors.underline.red(`${lintErrors.length} errors in file ${filePath}`)}:
 
       for (const lintError of lintErrors) {
         // eslint-disable-next-line no-console
-        console.log(lintError);
+        console.error(`${lintError} \n`);
       }
 
       process.exit(1);
@@ -54,6 +57,7 @@ function findLintErrors(fileName, str) {
     positions: true
   });
 
+  // The following is for debugging pusposes
   // eslint-disable-next-line no-console, no-magic-numbers
   // console.log(JSON.stringify(ast, null, 2));
 
@@ -91,7 +95,7 @@ function checkIfUsesIdSelector(node) {
   if (node.type === "IdSelector") {
     return `🔴 on line ${node.loc.start.line}: 
       There is an id selector: 
-        ${colors.red(node.name)}.
+        ${colors.red(node.name)}
       Id selectors are not allowed.`;
   }
 
@@ -109,7 +113,7 @@ function checkIfNestedMoreThanOnce(node) {
   ) {
     return `🔴 on line ${node.loc.start.line}: 
       The class name
-        ${colors.red(node.name)}.
+        ${colors.red(node.name)}
       is nested more than once`;
   }
 
@@ -130,7 +134,7 @@ function checkIfStartsWithComponentName(fileName, node) {
   ) {
     return `🔴 on line ${node.loc.start.line}: 
       The class name 
-        ${colors.red(node.name)}
+        ${colors.red(`.${node.name}`)}
       does not start with the component name.
       The name of the file is ${colors.blue(fileName)}.
       Your class names which differ from ${colors.blue(
@@ -185,7 +189,7 @@ function checkIfHasATypeSelectorUsedInAWrongWay(nodeContext, node, item) {
         !(item.prev.data.type === "Combinator" && item.prev.data.name === ">")))
   ) {
     return `🔴 on line ${node.loc.start.line}:
-      I see the type selector ${colors.red(node.name)}.
+      I see the type selector ${colors.red(node.name)}
       Type selectors are only allowed if they appear on the right hand side of a child combinator.
       For example, like ${colors.green(`... > ${node.name}`)}`;
   }
@@ -212,7 +216,7 @@ function toComponentName(fileName) {
   Otherwise it returns `false`.
 */
 function containsDoubleLowDashMoreThanOnce(nodeName) {
-  const matches = nodeName.match(/__/g);
+  const matches = nodeName.match(regexForDoubleLowDash);
 
   return matches ? matches.length > 1 : false;
 }
