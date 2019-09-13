@@ -6,8 +6,20 @@ const csstree = require("css-tree");
 const colors = require("colors/safe");
 const glob = require("glob");
 const argv = require("yargs")
-  .boolean("all")
-  .boolean("verbose").argv;
+  .option("all", {
+    alias: "a",
+    type: "boolean",
+    description: "Don't exit on error until all files are checked"
+  })
+  .option("verbose", {
+    alias: "v",
+    type: "boolean",
+    description: "Run with verbose logging"
+  })
+  .showHelpOnFail(true)
+  .demandCommand()
+  .recommendCommands()
+  .strict().argv;
 
 const regexForDoubleLowDash = /__/g;
 
