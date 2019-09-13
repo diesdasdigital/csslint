@@ -15,16 +15,13 @@ glob(argv._[0], null, (err, matchedFilePaths) => {
   }
 
   if (argv.all) {
-    const listOfFilesWithTheirErrors = matchedFilePaths
-      .map(filePath => ({
-        filePath: filePath,
-        errors: lint(filePath)
-      }))
+    const filePathsWithErrors = matchedFilePaths
+      .map(filePath => ({ filePath, errors: lint(filePath) }))
       .filter(fileWithErrors => fileWithErrors.errors.length > 0);
 
-    const numberOFFilesThatHaveErrors = listOfFilesWithTheirErrors.length;
+    const numberOFFilesThatHaveErrors = filePathsWithErrors.length;
 
-    const totalNumberOfErrors = listOfFilesWithTheirErrors.reduce(
+    const totalNumberOfErrors = filePathsWithErrors.reduce(
       (acc, fileWithErrors) => acc + fileWithErrors.errors.length,
       0
     );
@@ -37,12 +34,14 @@ glob(argv._[0], null, (err, matchedFilePaths) => {
         )
       );
 
-      for ({ filePath, errors } of listOfFilesWithTheirErrors) {
+      for (const { filePath, errors } of filePathsWithErrors) {
         printErrors(filePath, errors);
       }
+
+      process.exit(1);
     }
   } else {
-    for (filePath of matchedFilePaths) {
+    for (const filePath of matchedFilePaths) {
       const lintErrors = lint(filePath);
 
       if (lintErrors.length > 0) {
