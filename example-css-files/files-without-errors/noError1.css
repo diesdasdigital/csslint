@@ -1,0 +1,16 @@
+/* 
+    The following are OK. 
+    And should not be considered as error. 
+*/
+
+.no_error1--light-pink {
+  border: "1";
+}
+
+.no_error1__list {
+  border: "1";
+}
+
+.no_error1__list > li {
+  border: "1";
+}

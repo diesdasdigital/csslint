@@ -5,7 +5,9 @@ const path = require("path");
 const csstree = require("css-tree");
 const colors = require("colors/safe");
 const glob = require("glob");
-const argv = require("yargs").boolean("all").argv;
+const argv = require("yargs")
+  .boolean("all")
+  .boolean("verbose").argv;
 
 const regexForDoubleLowDash = /__/g;
 
@@ -30,7 +32,7 @@ glob(argv._[0], null, (err, matchedFilePaths) => {
       // eslint-disable-next-line no-console
       console.error(
         colors.red(
-          `I have found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files: \n `
+          `I have found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files: \n`
         )
       );
 
@@ -39,6 +41,13 @@ glob(argv._[0], null, (err, matchedFilePaths) => {
       }
 
       process.exit(1);
+    } else if (argv.verbose) {
+      // eslint-disable-next-line no-console
+      console.error(
+        colors.green(
+          `I have checked ${matchedFilePaths.length} files and found no erros \n`
+        )
+      );
     }
   } else {
     for (const filePath of matchedFilePaths) {
@@ -46,7 +55,11 @@ glob(argv._[0], null, (err, matchedFilePaths) => {
 
       if (lintErrors.length > 0) {
         printErrors(filePath, lintErrors);
+
         process.exit(1);
+      } else if (argv.verbose) {
+        // eslint-disable-next-line no-console
+        console.error(`No errors in file ${colors.green(filePath)}`);
       }
     }
   }
