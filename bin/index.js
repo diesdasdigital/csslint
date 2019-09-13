@@ -5,7 +5,7 @@ const path = require("path");
 const csstree = require("css-tree");
 const colors = require("colors/safe");
 const glob = require("glob");
-const argv = require("yargs").argv;
+const argv = require("yargs").boolean("all").argv;
 
 const regexForDoubleLowDash = /__/g;
 
