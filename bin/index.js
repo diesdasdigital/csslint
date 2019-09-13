@@ -7,12 +7,10 @@ const colors = require("colors/safe");
 const glob = require("glob");
 const argv = require("yargs")
   .option("all", {
-    alias: "a",
     type: "boolean",
     description: "Don't exit on error until all files are checked"
   })
   .option("verbose", {
-    alias: "v",
     type: "boolean",
     description: "Run with verbose logging"
   })
