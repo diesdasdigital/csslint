@@ -5,67 +5,84 @@ const path = require("path");
 const csstree = require("css-tree");
 const colors = require("colors/safe");
 const glob = require("glob");
+const argv = require("yargs").argv;
 
-// constants
 const regexForDoubleLowDash = /__/g;
 
-// the argument is a glob pattern
-const firstArgumentInCommandLine = process.argv[2]
-  ? process.argv[2]
-  : "**/*.css";
-
-glob(firstArgumentInCommandLine, null, (err, matchedFilePaths) => {
+glob(argv._[0], null, (err, matchedFilePaths) => {
   if (err) {
     throw err;
   }
-  for (const filePath of matchedFilePaths) {
-    lint(filePath);
+
+  if (argv.all) {
+    const listOfFilesWithTheirErrors = matchedFilePaths
+      .map(filePath => ({
+        filePath: filePath,
+        errors: lint(filePath)
+      }))
+      .filter(fileWithErrors => fileWithErrors.errors.length > 0);
+
+    const numberOFFilesThatHaveErrors = listOfFilesWithTheirErrors.length;
+
+    const totalNumberOfErrors = listOfFilesWithTheirErrors.reduce(
+      (acc, fileWithErrors) => acc + fileWithErrors.errors.length,
+      0
+    );
+
+    if (totalNumberOfErrors > 0) {
+      // eslint-disable-next-line no-console
+      console.error(
+        colors.red(
+          `I have found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files: \n `
+        )
+      );
+
+      for ({ filePath, errors } of listOfFilesWithTheirErrors) {
+        printErrors(filePath, errors);
+      }
+    }
+  } else {
+    for (filePath of matchedFilePaths) {
+      const lintErrors = lint(filePath);
+
+      if (lintErrors.length > 0) {
+        printErrors(filePath, lintErrors);
+        process.exit(1);
+      }
+    }
   }
 });
 
-function lint(filePath) {
-  fs.readFile(filePath, "utf8", (err, str) => {
-    if (err) {
-      throw err;
-    }
+function printErrors(filePath, lintErrors) {
+  // eslint-disable-next-line no-console
+  console.error(
+    `${colors.underline.red(
+      `${lintErrors.length} errors in file ${filePath}: \n`
+    )}`
+  );
 
-    const fileName = path.basename(filePath, ".css");
-
-    const lintErrors = findLintErrors(fileName, str);
-
-    if (lintErrors.length > 0) {
-      // eslint-disable-next-line no-console
-      console.error(
-        `
-${colors.underline.red(`${lintErrors.length} errors in file ${filePath}`)}:
-        `
-      );
-
-      for (const lintError of lintErrors) {
-        // eslint-disable-next-line no-console
-        console.error(`${lintError} \n`);
-      }
-
-      process.exit(1);
-    } else {
-      // eslint-disable-next-line no-console
-      console.log(`No errors in file ${colors.green(filePath)}`);
-    }
-  });
+  for (const lintError of lintErrors) {
+    // eslint-disable-next-line no-console
+    console.error(`${lintError} \n`);
+  }
 }
 
-function findLintErrors(fileName, str) {
-  const ast = csstree.parse(str, {
+function lint(filePath) {
+  const fileName = path.basename(filePath, ".css");
+  const fileContent = fs.readFileSync(filePath, "utf8");
+  return findLintErrors(fileName, fileContent);
+}
+
+function findLintErrors(fileName, fileContent) {
+  const ast = csstree.parse(fileContent, {
     positions: true
   });
 
-  // The following is for debugging pusposes
-  // eslint-disable-next-line no-console, no-magic-numbers
   // console.log(JSON.stringify(ast, null, 2));
 
   const lintErrors = [];
 
-  function addErrorMessage(maybeErrorMessage) {
+  function maybeAddError(maybeErrorMessage) {
     if (maybeErrorMessage !== "no error") {
       lintErrors.push(maybeErrorMessage);
     }
@@ -75,16 +92,13 @@ function findLintErrors(fileName, str) {
     // eslint-disable-next-line no-invalid-this
     const nodeContext = this;
 
-    addErrorMessage(checkIfUsesIdSelector(node));
-    addErrorMessage(checkIfNestedMoreThanOnce(node));
-    addErrorMessage(checkIfStartsWithComponentName(fileName, node));
-    addErrorMessage(checkIfAnimationStartsWithComponentName(fileName, node));
-    addErrorMessage(
-      checkIfHasATypeSelectorUsedInAWrongWay(nodeContext, node, item)
-    );
+    maybeAddError(checkIfUsesIdSelector(node));
+    maybeAddError(checkIfNestedMoreThanOnce(node));
+    maybeAddError(checkIfStartsWithComponentName(fileName, node));
+    maybeAddError(checkIfAnimationStartsWithComponentName(fileName, node));
+    maybeAddError(checkIfUsesTypeSelector(nodeContext, node, item));
   });
 
-  // eslint-disable-next-line no-console
   return lintErrors;
 }
 
@@ -177,7 +191,7 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
     Type selectors (like "div", "ul", "li", ...) are only allowed
       if they appear on the right hand side of a child combinator (like "my--form__list > li")
 */
-function checkIfHasATypeSelectorUsedInAWrongWay(nodeContext, node, item) {
+function checkIfUsesTypeSelector(nodeContext, node, item) {
   if (
     node.type === "TypeSelector" &&
     nodeContext.atrule === null &&
@@ -214,6 +228,5 @@ function toComponentName(fileName) {
 */
 function containsDoubleLowDashMoreThanOnce(nodeName) {
   const matches = nodeName.match(regexForDoubleLowDash);
-
   return matches ? matches.length > 1 : false;
 }
