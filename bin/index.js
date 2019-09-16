@@ -112,6 +112,8 @@ function findLintErrors(fileName, fileContent) {
 
   // console.log(JSON.stringify(ast, null, 2));
 
+  const indicesOfIgnoredLines = getIndicesOfIgnoredLines(fileContent);
+
   const lintErrors = [];
 
   function maybeAddError(maybeErrorMessage) {
@@ -121,17 +123,34 @@ function findLintErrors(fileName, fileContent) {
   }
 
   csstree.walk(ast, function(node, item) {
-    // eslint-disable-next-line no-invalid-this
-    const nodeContext = this;
+    if (node.loc && !indicesOfIgnoredLines.includes(node.loc.start.line)) {
+      // eslint-disable-next-line no-invalid-this
+      const nodeContext = this;
 
-    maybeAddError(checkIfUsesIdSelector(node));
-    maybeAddError(checkIfNestedMoreThanOnce(node));
-    maybeAddError(checkIfStartsWithComponentName(fileName, node));
-    maybeAddError(checkIfAnimationStartsWithComponentName(fileName, node));
-    maybeAddError(checkIfUsesTypeSelector(nodeContext, node, item));
+      maybeAddError(checkIfUsesIdSelector(node));
+      maybeAddError(checkIfNestedMoreThanOnce(node));
+      maybeAddError(checkIfStartsWithComponentName(fileName, node));
+      maybeAddError(checkIfAnimationStartsWithComponentName(fileName, node));
+      maybeAddError(checkIfUsesTypeSelector(nodeContext, node, item));
+    }
   });
 
   return lintErrors;
+}
+
+function getIndicesOfIgnoredLines(fileContent) {
+  const indicesOfIgnoredLines = [];
+
+  fileContent.split("\n").map((lineContent, index) => {
+    if (
+      lineContent.trim().startsWith("/*") &&
+      lineContent.includes("csslint-disable-next-line")
+    ) {
+      indicesOfIgnoredLines.push(index + 2);
+    }
+  });
+
+  return indicesOfIgnoredLines;
 }
 
 // EACH FUNCTION BELOW CHECKS A RULE:
@@ -250,7 +269,7 @@ function checkIfUsesTypeSelector(nodeContext, node, item) {
 function toComponentName(fileName) {
   return fileName
     .split(/(?=[A-Z])/)
-    .join("_")
+    .join("-")
     .toLowerCase();
 }
 

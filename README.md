@@ -20,16 +20,33 @@ To install all dependencies run:
 yarn
 ```
 
-Then, you can run the linter one a single file
+Then, you can run the linter on a single file
 
 ```
-yarn start 'example-css-files/example.css'
+yarn start example-css-files/example.css
+```
+
+on multiple files
+
+```
+yarn start example-css-files/example.css example-css-files/example2.css
 ```
 
 or you can use a glob pattern like
 
 ```
-yarn start '**/*.css'
+yarn start **/*.css
+```
+
+## Ignoring errors
+
+In your projects root folder, create a file named `.csslintignore`.
+The files in there will be ignored.
+
+Alternatively you can ignore a single line by writing the following comment in the previous line:
+
+```
+/* csslint-disable-next-line */
 ```
 
 # For Development
