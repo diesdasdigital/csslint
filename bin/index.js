@@ -141,14 +141,14 @@ function findLintErrors(fileName, fileContent) {
 function getIndicesOfIgnoredLines(fileContent) {
   const indicesOfIgnoredLines = [];
 
-  fileContent.split("\n").map((lineContent, index) => {
+  for (const [index, lineContent] of fileContent.split("\n").entries()) {
     if (
       lineContent.trim().startsWith("/*") &&
       lineContent.includes("csslint-disable-next-line")
     ) {
-      indicesOfIgnoredLines.push(index + 2);
+      indicesOfIgnoredLines.push(index + 1 + 1);
     }
-  });
+  }
 
   return indicesOfIgnoredLines;
 }
