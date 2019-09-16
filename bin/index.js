@@ -4,7 +4,6 @@ const fs = require("fs");
 const path = require("path");
 const csstree = require("css-tree");
 const colors = require("colors/safe");
-const glob = require("glob");
 const argv = require("yargs")
   .option("all", {
     type: "boolean",
@@ -19,61 +18,61 @@ const argv = require("yargs")
   .recommendCommands()
   .strict().argv;
 
+try {
+  const ignoredFiles = fs.readFileSync(".csslintignore", "utf8");
+} catch (error) {}
+
 const regexForDoubleLowDash = /__/g;
 
-glob(argv._[0], null, (err, matchedFilePaths) => {
-  if (err) {
-    throw err;
-  }
+const matchedFilePaths = argv._;
 
-  if (argv.all) {
-    const filePathsWithErrors = matchedFilePaths
-      .map(filePath => ({ filePath, errors: lint(filePath) }))
-      .filter(fileWithErrors => fileWithErrors.errors.length > 0);
+if (argv.all) {
+  const filePathsWithErrors = matchedFilePaths
+    .map(filePath => ({ filePath, errors: lint(filePath) }))
+    .filter(fileWithErrors => fileWithErrors.errors.length > 0);
 
-    const numberOFFilesThatHaveErrors = filePathsWithErrors.length;
+  const numberOFFilesThatHaveErrors = filePathsWithErrors.length;
 
-    const totalNumberOfErrors = filePathsWithErrors.reduce(
-      (acc, fileWithErrors) => acc + fileWithErrors.errors.length,
-      0
+  const totalNumberOfErrors = filePathsWithErrors.reduce(
+    (acc, fileWithErrors) => acc + fileWithErrors.errors.length,
+    0
+  );
+
+  if (totalNumberOfErrors > 0) {
+    // eslint-disable-next-line no-console
+    console.error(
+      colors.red(
+        `I have found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files: \n`
+      )
     );
 
-    if (totalNumberOfErrors > 0) {
-      // eslint-disable-next-line no-console
-      console.error(
-        colors.red(
-          `I have found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files: \n`
-        )
-      );
+    for (const { filePath, errors } of filePathsWithErrors) {
+      printErrors(filePath, errors);
+    }
 
-      for (const { filePath, errors } of filePathsWithErrors) {
-        printErrors(filePath, errors);
-      }
+    process.exit(1);
+  } else if (argv.verbose) {
+    // eslint-disable-next-line no-console
+    console.error(
+      colors.green(
+        `I have checked ${matchedFilePaths.length} files and found no erros \n`
+      )
+    );
+  }
+} else {
+  for (const filePath of matchedFilePaths) {
+    const lintErrors = lint(filePath);
+
+    if (lintErrors.length > 0) {
+      printErrors(filePath, lintErrors);
 
       process.exit(1);
     } else if (argv.verbose) {
       // eslint-disable-next-line no-console
-      console.error(
-        colors.green(
-          `I have checked ${matchedFilePaths.length} files and found no erros \n`
-        )
-      );
-    }
-  } else {
-    for (const filePath of matchedFilePaths) {
-      const lintErrors = lint(filePath);
-
-      if (lintErrors.length > 0) {
-        printErrors(filePath, lintErrors);
-
-        process.exit(1);
-      } else if (argv.verbose) {
-        // eslint-disable-next-line no-console
-        console.error(`No errors in file ${colors.green(filePath)}`);
-      }
+      console.error(`No errors in file ${colors.green(filePath)}`);
     }
   }
-});
+}
 
 function printErrors(filePath, lintErrors) {
   // eslint-disable-next-line no-console
