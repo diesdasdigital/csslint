@@ -37,15 +37,16 @@ const filePathsToIgnore = getFilePathsToIgnore();
 const filePathsToLint = argv._.filter(
   filePath => !filePathsToIgnore.includes(filePath)
 );
-// eslint-disable-next-line no-console
-console.log(filePathsToLint);
 
 if (argv.all) {
-  const filePathsWithErrors = filePathsToLint
-    .map(filePath => ({ filePath, errors: lint(filePath) }))
-    .filter(fileWithErrors => fileWithErrors.errors.length > 0);
+  const filePathsWithErrors = filePathsToLint.map(filePath => ({
+    filePath,
+    errors: lint(filePath)
+  }));
 
-  const numberOFFilesThatHaveErrors = filePathsWithErrors.length;
+  const numberOFFilesThatHaveErrors = filePathsWithErrors.filter(
+    fileWithErrors => fileWithErrors.errors.length > 0
+  ).length;
 
   const totalNumberOfErrors = filePathsWithErrors.reduce(
     (acc, fileWithErrors) => acc + fileWithErrors.errors.length,
@@ -56,45 +57,41 @@ if (argv.all) {
     // eslint-disable-next-line no-console
     console.error(
       colors.red(
-        `I have found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files: \n`
+        `\nI have found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files:`
       )
     );
 
     for (const { filePath, errors } of filePathsWithErrors) {
-      printErrors(filePath, errors);
+      printErrors(filePath, errors, argv.verbose);
     }
 
     process.exit(1);
-  } else if (argv.verbose) {
-    // eslint-disable-next-line no-console
-    console.error(
-      colors.green(
-        `I have checked ${filePathsToLint.length} files and found no erros \n`
-      )
-    );
   }
 } else {
   for (const filePath of filePathsToLint) {
     const lintErrors = lint(filePath);
 
-    if (lintErrors.length > 0) {
-      printErrors(filePath, lintErrors);
+    printErrors(filePath, lintErrors, argv.verbose);
 
+    if (lintErrors.length > 0) {
       process.exit(1);
-    } else if (argv.verbose) {
-      // eslint-disable-next-line no-console
-      console.error(`No errors in file ${colors.green(filePath)}`);
     }
   }
 }
 
-function printErrors(filePath, lintErrors) {
-  // eslint-disable-next-line no-console
-  console.error(
-    `${colors.underline.red(
-      `${lintErrors.length} errors in file ${filePath}: \n`
-    )}`
-  );
+function printErrors(filePath, lintErrors, verbose) {
+  if (verbose && lintErrors.length === 0) {
+    // eslint-disable-next-line no-console
+    console.log(`\n✅ ${colors.green(`No errors in file ${filePath}`)}`);
+  }
+  if (lintErrors.length > 0) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `\n❗ ${colors.underline.red(
+        `${lintErrors.length} errors in file ${filePath}: \n`
+      )}`
+    );
+  }
 
   for (const lintError of lintErrors) {
     // eslint-disable-next-line no-console
