@@ -18,16 +18,30 @@ const argv = require("yargs")
   .recommendCommands()
   .strict().argv;
 
-try {
-  const ignoredFiles = fs.readFileSync(".csslintignore", "utf8");
-} catch (error) {}
-
 const regexForDoubleLowDash = /__/g;
 
-const matchedFilePaths = argv._;
+function getFilePathsToIgnore() {
+  try {
+    return fs
+      .readFileSync(".csslintignore", "utf8")
+      .split("\n")
+      .map(lineContent => lineContent.trim())
+      .filter(trimmedLineContent => trimmedLineContent !== "");
+  } catch (error) {
+    return [];
+  }
+}
+
+const filePathsToIgnore = getFilePathsToIgnore();
+
+const filePathsToLint = argv._.filter(
+  filePath => !filePathsToIgnore.includes(filePath)
+);
+// eslint-disable-next-line no-console
+console.log(filePathsToLint);
 
 if (argv.all) {
-  const filePathsWithErrors = matchedFilePaths
+  const filePathsWithErrors = filePathsToLint
     .map(filePath => ({ filePath, errors: lint(filePath) }))
     .filter(fileWithErrors => fileWithErrors.errors.length > 0);
 
@@ -55,12 +69,12 @@ if (argv.all) {
     // eslint-disable-next-line no-console
     console.error(
       colors.green(
-        `I have checked ${matchedFilePaths.length} files and found no erros \n`
+        `I have checked ${filePathsToLint.length} files and found no erros \n`
       )
     );
   }
 } else {
-  for (const filePath of matchedFilePaths) {
+  for (const filePath of filePathsToLint) {
     const lintErrors = lint(filePath);
 
     if (lintErrors.length > 0) {
