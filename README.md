@@ -14,13 +14,14 @@ Linter for diesdas’ [CSS architecture](https://diesdas.digital/wiki/life-as-a-
 
 ## Installation
 
-To install all dependencies run:
+To add it to your project use `npm` or `yarn`:
 
 ```
 yarn add @diesdasdigital/csslint --dev
+npm install @diesdasdigital/csslint --save-dev
 ```
 
-Then you can use the linter via `npx` or in `package.json`:
+Then you can use the linter via `npx` or in `package.json` scripts:
 
 ```json
 {
@@ -30,12 +31,19 @@ Then you can use the linter via `npx` or in `package.json`:
 }
 ```
 
+## Flags
+
+`--all`
+doesn’t stop on the first invalid file and shows a summary of how many errors it found
+
+`--verbose`
+also logs all valid files it has checked
+
 ## Ignoring errors
 
-In your projects root folder, create a file named `.csslintignore`.
-The files in there will be ignored.
+In your projects root folder, create `.csslintignore` file, which includes new line separate file paths which should be ignored.
 
-Alternatively you can ignore a single line by writing the following comment in the previous line:
+Alternatively you can ignore a single line inside of a file by writing the following comment in the previous line:
 
 ```
 /* csslint-disable-next-line */
@@ -43,7 +51,7 @@ Alternatively you can ignore a single line by writing the following comment in t
 
 ## Collaboration
 
-### Requirements
+If you want to create PR, we test and develop this tool using these as a baseline:
 
 - macOS
 - [`node`](https://nodejs.org/en/) (we recommend installing it via [nvm](https://github.com/creationix/nvm))
