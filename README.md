@@ -34,9 +34,11 @@ Then you can use the linter via `npx` or in `package.json` scripts:
 ## Flags
 
 `--all`
+
 doesn’t stop on the first invalid file and shows a summary of how many errors it found
 
 `--verbose`
+
 also logs all valid files it has checked
 
 ## Ignoring errors
