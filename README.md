@@ -20,7 +20,7 @@ To install all dependencies run:
 yarn add @diesdasdigital/csslint --dev
 ```
 
-Then you can run use the linter via `npx` or in `package.json`:
+Then you can use the linter via `npx` or in `package.json`:
 
 ```json
 {
