@@ -34,6 +34,25 @@ Then you can run use the linter in `package.json` or via `npx`.
 
 If you want to make changes to `csslint` you need to have the following tools:
 
+or you can use a glob pattern like
+
+```
+yarn start '**/*.css'
+```
+
+## Ignoring errors
+
+In your projects root folder, create a file named `.csslintignore`.
+The files in there will be ignored.
+
+Alternatively you can ignore a single line by writing the following comment in the previous line:
+
+```
+/* csslint-disable-next-line */
+```
+
+# For Development
+
 ### Requirements
 
 - macOS

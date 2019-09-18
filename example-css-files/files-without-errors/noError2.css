@@ -3,14 +3,14 @@
     And should not be considered as error. 
 */
 
-.no_error2--light-pink {
+.no-error2--light-pink {
   border: "1";
 }
 
-.no_error2__list {
+.no-error2__list {
   border: "1";
 }
 
-.no_error2__list > li {
+.no-error2__list > li {
   border: "1";
 }

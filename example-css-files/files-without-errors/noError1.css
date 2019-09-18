@@ -3,14 +3,19 @@
     And should not be considered as error. 
 */
 
-.no_error1--light-pink {
+.no-error1--light-pink {
   border: "1";
 }
 
-.no_error1__list {
+.no-error1__list {
   border: "1";
 }
 
-.no_error1__list > li {
+.no-error1__list > li {
+  border: "1";
+}
+
+/* csslint-disable-next-line */
+.this-error-should-be-ignored {
   border: "1";
 }
