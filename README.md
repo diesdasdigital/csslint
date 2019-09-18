@@ -37,7 +37,7 @@ If you want to make changes to `csslint` you need to have the following tools:
 or you can use a glob pattern like
 
 ```
-yarn start **/*.css
+yarn start '**/*.css'
 ```
 
 ## Ignoring errors
