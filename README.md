@@ -6,7 +6,7 @@ Linter for diesdas’ [CSS architecture](https://diesdas.digital/wiki/life-as-a-
 
 - [x] component name is used on every class as a prefix
 - [x] no multiple nesting in class names, eg `.component__one__two` is ill-formed
-- [x] animation names should start with the component name: `@keyframes my-component__my-animation { ...`
+- [x] animation names should start with the component name, eg `@keyframes component__my-animation`
 - [x] no type selectors (with the only exception `> tag`)
 - [x] no id selectors
 
