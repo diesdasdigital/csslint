@@ -61,16 +61,23 @@ glob(argv._[0], null, (error, matchedFilePaths) => {
     );
 
     if (totalNumberOfErrors > 0) {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line
       console.error(
         colors.red(
-          `❌ I have found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files:\n`
+          `❌ csslint found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files:\n`
         )
       );
 
       for (const { filePath, errors } of filePathsWithErrors) {
         printErrors(filePath, errors, argv.verbose);
       }
+
+      // eslint-disable-next-line
+      console.error(
+        colors.red(
+          `❌ csslint found ${totalNumberOfErrors} errors in ${numberOFFilesThatHaveErrors} files.\n`
+        )
+      );
 
       process.exit(1);
     }
