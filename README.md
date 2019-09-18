@@ -2,7 +2,7 @@
 
 Linter for diesdas’ [CSS architecture](https://diesdas.digital/wiki/life-as-a-developer/how-we-write-css).
 
-### CSS rules it checks:
+### Rules it checks:
 
 - [x] component name is used on every class as a prefix
 - [x] no multiple nesting in class names, eg `.component__one__two` is ill-formed
