@@ -18,7 +18,7 @@ Therefore we came up with a CSS architecture which has one major and a few minor
 
 ### Rules it checks:
 
-- [x] **every class name is prefixed by the component name (file name)**
+- [x] **every class name is prefixed by the component/file name**
 - [x] also animation names should start with the component name, eg `@keyframes component__my-animation`
 - [x] no multiple nesting in class names, eg `.component__one__two` is ill-formed
 - [x] no type selectors (with the only exception `> tag`)
