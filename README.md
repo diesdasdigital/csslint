@@ -48,5 +48,3 @@ Alternatively you can ignore a single line by writing the following comment in t
 - macOS
 - [`node`](https://nodejs.org/en/) (we recommend installing it via [nvm](https://github.com/creationix/nvm))
 - [`yarn`](https://yarnpkg.com)
-
-**_Note:_** _all of the following commands should be run in the project’s folder._
