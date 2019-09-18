@@ -1,4 +1,4 @@
-# csslint ![npm badge](https://badgen.net/npm/v/@diesdasdigital/csslint)
+# csslint [![npm badge](https://badgen.net/npm/v/@diesdasdigital/csslint)](https://www.npmjs.com/package/@diesdasdigital/csslint)
 
 Linter for diesdas’ [CSS architecture](https://diesdas.digital/wiki/life-as-a-developer/how-we-write-css).
 
