@@ -20,24 +20,14 @@ To install all dependencies run:
 yarn add @diesdasdigital/csslint --dev
 ```
 
-Then you can run use the linter in `package.json` or via `npx`.
+Then you can run use the linter via `npx` or in `package.json`:
 
 ```json
 {
   "scripts": {
-    "lint": "csslint 'src/**/*.css'"
+    "lint": "csslint 'src/**/*.css' --all"
   }
 }
-```
-
-## Collaboration
-
-If you want to make changes to `csslint` you need to have the following tools:
-
-or you can use a glob pattern like
-
-```
-yarn start '**/*.css'
 ```
 
 ## Ignoring errors
@@ -51,7 +41,7 @@ Alternatively you can ignore a single line by writing the following comment in t
 /* csslint-disable-next-line */
 ```
 
-# For Development
+## Collaboration
 
 ### Requirements
 
