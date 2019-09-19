@@ -25,13 +25,17 @@ Therefore we came up with a CSS architecture which has one major and a few minor
 - [x] no id selectors
 
 ### Advantages
+
 1️⃣ Generic knowledge
+
 CSS syntax is a standard. Learn it once.
 
 2️⃣ Meaningful class names
+
 Even in production we have meaningful class names which helps when we need to debug.
 
 3️⃣ No build step
+
 Every browser knows how to load CSS.
 
 ![Screenshot of error messages](diesdas-css-linter-screenshot.png)
