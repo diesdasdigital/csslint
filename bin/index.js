@@ -250,7 +250,7 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
     Type selectors (like "div", "ul", "li", ...) are only allowed
       if they appear on the right hand side of a child combinator (like "my--form__list > li")
 */
-function checkIfUsesTypeSelector(nodeContext, node, item) {
+function checkIfUsesTypeSelector(nodeContext, node) {
   if (node.type === "TypeSelector" && nodeContext.atrule === null) {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   There is a type selector ${colors.red(node.name)}`;
