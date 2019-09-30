@@ -251,17 +251,9 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
       if they appear on the right hand side of a child combinator (like "my--form__list > li")
 */
 function checkIfUsesTypeSelector(nodeContext, node, item) {
-  if (
-    node.type === "TypeSelector" &&
-    nodeContext.atrule === null &&
-    (!item.prev ||
-      (item.prev &&
-        !(item.prev.data.type === "Combinator" && item.prev.data.name === ">")))
-  ) {
+  if (node.type === "TypeSelector" && nodeContext.atrule === null) {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
-  There is a type selector ${colors.red(node.name)}
-  Type selectors are only allowed if they appear on the right hand side of a child combinator.
-  For example, like ${colors.green(`... > ${node.name}`)}`;
+  There is a type selector ${colors.red(node.name)}`;
   }
 
   return "no error";
