@@ -125,7 +125,7 @@ function findLintErrors(fileName, fileContent) {
     positions: true
   });
 
-  // console.log(JSON.stringify(ast, null, 2));
+  console.log(JSON.stringify(ast, null, 2));
 
   const indicesOfIgnoredLines = getIndicesOfIgnoredLines(fileContent);
 
@@ -147,6 +147,7 @@ function findLintErrors(fileName, fileContent) {
       maybeAddError(checkIfStartsWithComponentName(fileName, node));
       maybeAddError(checkIfAnimationStartsWithComponentName(fileName, node));
       maybeAddError(checkIfUsesTypeSelector(nodeContext, node, item));
+      maybeAddError(checkIfHasImports(fileName, node));
     }
   });
 
@@ -256,6 +257,18 @@ function checkIfUsesTypeSelector(nodeContext, node) {
   There is a type selector ${colors.red(node.name)}`;
   }
 
+  return "no error";
+}
+
+/*
+    All imports are disallowed except for main.css
+*/
+function checkIfHasImports(fileName, node) {
+  if (fileName !== "main" && node.type === "Atrule" && node.name === "import") {
+    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+  There is an import rule.
+  All imports are disallowed except for main.css`;
+  }
   return "no error";
 }
 
