@@ -125,7 +125,7 @@ function findLintErrors(fileName, fileContent) {
     positions: true
   });
 
-  console.log(JSON.stringify(ast, null, 2));
+  // console.log(JSON.stringify(ast, null, 2));
 
   const indicesOfIgnoredLines = getIndicesOfIgnoredLines(fileContent);
 
