@@ -267,7 +267,13 @@ function checkIfHasImports(fileName, node) {
   if (fileName !== "main" && node.type === "Atrule" && node.name === "import") {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   There is an import rule.
-  All imports are disallowed except for main.css`;
+  Imports are only allowed in main.css.
+  Having all imports in one file guarantees 
+  that there is only one place in the project
+  to see which CSS files are loaded. 
+  It also improves the site’s performance, 
+  since the browser only needs to load one file 
+  to know which files it needs to load afterwards.`;
   }
   return "no error";
 }
