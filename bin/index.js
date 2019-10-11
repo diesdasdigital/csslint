@@ -142,13 +142,13 @@ function findLintErrors(fileName, fileContent) {
       // eslint-disable-next-line no-invalid-this
       const nodeContext = this;
 
-      maybeAddError(checkIfUsesIdSelector(node));
-      maybeAddError(checkIfNestedMoreThanOnce(node));
-      maybeAddError(checkIfStartsWithComponentName(fileName, node));
-      maybeAddError(checkIfAnimationStartsWithComponentName(fileName, node));
-      maybeAddError(checkIfUsesTypeSelector(nodeContext, node, item));
-      maybeAddError(checkIfHasImports(fileName, node));
-      maybeAddError(checkIfHasOnlyImports(fileName, node));
+      maybeAddError(shouldUseIdSelector(node));
+      maybeAddError(shouldNotBeNestedMoreThanOnce(node));
+      maybeAddError(shouldStartWithComponentName(fileName, node));
+      maybeAddError(animationShouldStartWithComponentName(fileName, node));
+      maybeAddError(shouldNotUseTypeSelector(nodeContext, node, item));
+      maybeAddError(shouldNotHaveImports(fileName, node));
+      maybeAddError(shouldHaveOnlyImports(fileName, node));
     }
   });
 
@@ -175,7 +175,7 @@ function getIndicesOfIgnoredLines(fileContent) {
 /*
     Id selectors are not allowed.
 */
-function checkIfUsesIdSelector(node) {
+function shouldUseIdSelector(node) {
   if (node.type === "IdSelector") {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   There is an id selector ${colors.red(`#${node.name}`)}
@@ -189,7 +189,7 @@ function checkIfUsesIdSelector(node) {
     Nesting elements to blocks is not allowed.
     For example, the class name ".block__one__two" is ill-formed.
 */
-function checkIfNestedMoreThanOnce(node) {
+function shouldNotBeNestedMoreThanOnce(node) {
   if (
     node.type === "ClassSelector" &&
     containsDoubleLowDashMoreThanOnce(node.name)
@@ -205,7 +205,7 @@ function checkIfNestedMoreThanOnce(node) {
     Class names should start with file name.
     For example, every class name in the file "SearchField.css" should start with "search-field"
 */
-function checkIfStartsWithComponentName(fileName, node) {
+function shouldStartWithComponentName(fileName, node) {
   const componentName = toComponentName(fileName);
 
   if (
@@ -230,7 +230,7 @@ function checkIfStartsWithComponentName(fileName, node) {
     Animation names start with the component name.
     For example, every animation name in the file "SearchField.css" should start with "search-field__"
 */
-function checkIfAnimationStartsWithComponentName(fileName, node) {
+function animationShouldStartWithComponentName(fileName, node) {
   const componentName = toComponentName(fileName);
 
   if (node.type === "Atrule" && node.name === "keyframes") {
@@ -252,7 +252,7 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
     Type selectors (like "div", "ul", "li", ...) are only allowed
       if they appear on the right hand side of a child combinator (like "my--form__list > li")
 */
-function checkIfUsesTypeSelector(nodeContext, node) {
+function shouldNotUseTypeSelector(nodeContext, node) {
   if (node.type === "TypeSelector" && nodeContext.atrule === null) {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   There is a type selector ${colors.red(node.name)}`;
@@ -264,7 +264,7 @@ function checkIfUsesTypeSelector(nodeContext, node) {
 /*
     All imports are disallowed except for main.css
 */
-function checkIfHasImports(fileName, node) {
+function shouldNotHaveImports(fileName, node) {
   if (fileName !== "main" && node.type === "Atrule" && node.name === "import") {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   There is an import rule.
@@ -282,7 +282,7 @@ function checkIfHasImports(fileName, node) {
 /*
     In main.css, only import rules are allowed.
 */
-function checkIfHasOnlyImports(fileName, node) {
+function shouldHaveOnlyImports(fileName, node) {
   if (fileName === "main" && node.name !== "import") {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   Your ${colors.blue(
