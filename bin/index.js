@@ -147,6 +147,7 @@ function findLintErrors(fileName, fileContent) {
       maybeAddError(checkIfStartsWithComponentName(fileName, node));
       maybeAddError(checkIfAnimationStartsWithComponentName(fileName, node));
       maybeAddError(checkIfUsesTypeSelector(nodeContext, node, item));
+      maybeAddError(checkIfHasImports(fileName, node));
     }
   });
 
@@ -247,8 +248,7 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
 }
 
 /*
-    Type selectors (like "div", "ul", "li", ...) are only allowed
-      if they appear on the right hand side of a child combinator (like "my--form__list > li")
+    Type selectors (like "div", "ul", "li", ...) are not allowed.
 */
 function checkIfUsesTypeSelector(nodeContext, node) {
   if (node.type === "TypeSelector" && nodeContext.atrule === null) {
@@ -256,6 +256,23 @@ function checkIfUsesTypeSelector(nodeContext, node) {
   There is a type selector ${colors.red(node.name)}`;
   }
 
+  return "no error";
+}
+
+/*
+    Imports are only allowed in main.css
+*/
+function checkIfHasImports(fileName, node) {
+  if (fileName !== "main" && node.type === "Atrule" && node.name === "import") {
+    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+  Imports are only allowed in main.css.
+  Having all imports in one file guarantees 
+  that there is only one place in the project
+  to see which CSS files are loaded. 
+  It also improves the site’s performance, 
+  since the browser only needs to load one file 
+  to know which files it needs to load afterwards.`;
+  }
   return "no error";
 }
 
