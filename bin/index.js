@@ -125,7 +125,7 @@ function findLintErrors(fileName, fileContent) {
     positions: true
   });
 
-  // console.log(JSON.stringify(ast, null, 2));
+  // console.log(ast);
 
   const indicesOfIgnoredLines = getIndicesOfIgnoredLines(fileContent);
 
@@ -137,16 +137,18 @@ function findLintErrors(fileName, fileContent) {
     }
   }
 
-  csstree.walk(ast, function(node, item) {
-    if (node.loc && !indicesOfIgnoredLines.includes(node.loc.start.line)) {
-      // eslint-disable-next-line no-invalid-this
-      const nodeContext = this;
+  if (fileName === "main") {
+    ast.children.forEach(node => {
+      maybeAddError(shouldHaveOnlyImports(node));
+    });
+  }
 
-      if (fileName === "main") {
-        maybeAddError(shouldHaveOnlyImports(node));
-      }
+  if (fileName !== "main") {
+    csstree.walk(ast, function(node, item) {
+      if (node.loc && !indicesOfIgnoredLines.includes(node.loc.start.line)) {
+        // eslint-disable-next-line no-invalid-this
+        const nodeContext = this;
 
-      if (fileName !== "main") {
         maybeAddError(shouldNotHaveImports(node));
         maybeAddError(shouldNotUseIdSelector(node));
         maybeAddError(classNameShouldNotBeNestedMoreThanOnce(node));
@@ -154,8 +156,8 @@ function findLintErrors(fileName, fileContent) {
         maybeAddError(animationShouldStartWithComponentName(fileName, node));
         maybeAddError(shouldNotUseTypeSelector(nodeContext, node, item));
       }
-    }
-  });
+    });
+  }
 
   return lintErrors;
 }
@@ -182,7 +184,7 @@ function getIndicesOfIgnoredLines(fileContent) {
 */
 function shouldNotUseIdSelector(node) {
   if (node.type === "IdSelector") {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+    return `  ${printLineNumber(node)}
   There is an id selector ${colors.red(`#${node.name}`)}
   Please use a class instead.`;
   }
@@ -199,7 +201,7 @@ function classNameShouldNotBeNestedMoreThanOnce(node) {
     node.type === "ClassSelector" &&
     containsDoubleLowDashMoreThanOnce(node.name)
   ) {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+    return `  ${printLineNumber(node)}
   The class name ${colors.red(`.${node.name}`)} is nested more than once`;
   }
 
@@ -219,7 +221,7 @@ function classNameShouldStartWithComponentName(fileName, node) {
     !node.name.startsWith(`${componentName}--`) &&
     !node.name.startsWith(`${componentName}__`)
   ) {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+    return `  ${printLineNumber(node)}
   The class name ${colors.red(`.${node.name}`)}
   does not start with the component name.
   The name of the file is ${colors.blue(fileName)}.
@@ -242,7 +244,7 @@ function animationShouldStartWithComponentName(fileName, node) {
     const animationName = node.prelude.children.first().name;
 
     if (!animationName.startsWith(`${componentName}__`)) {
-      return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+      return `  ${printLineNumber(node)}
   The animation name ${colors.red(animationName)}
   does not start with the component name.
   The name of the file is ${colors.blue(fileName)}.
@@ -254,12 +256,11 @@ function animationShouldStartWithComponentName(fileName, node) {
 }
 
 /*
-    Type selectors (like "div", "ul", "li", ...) are only allowed
-      if they appear on the right hand side of a child combinator (like "my--form__list > li")
+    Type selectors (like "div", "ul", "li", ...) are not allowed.
 */
 function shouldNotUseTypeSelector(nodeContext, node) {
   if (node.type === "TypeSelector" && nodeContext.atrule === null) {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+    return `  ${printLineNumber(node)}
   There is a type selector ${colors.red(node.name)}`;
   }
 
@@ -267,12 +268,11 @@ function shouldNotUseTypeSelector(nodeContext, node) {
 }
 
 /*
-    All imports are disallowed except for main.css
+    Imports are only allowed in main.css
 */
 function shouldNotHaveImports(node) {
   if (node.type === "Atrule" && node.name === "import") {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
-  There is an import rule.
+    return `  ${printLineNumber(node)}
   Imports are only allowed in main.css.
   Having all imports in one file guarantees 
   that there is only one place in the project
@@ -288,8 +288,8 @@ function shouldNotHaveImports(node) {
     In main.css, only import rules are allowed.
 */
 function shouldHaveOnlyImports(node) {
-  if (node.name !== "import") {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+  if (!node.name || node.name !== "import") {
+    return `  ${printLineNumber(node)}
   Your ${colors.blue(
     "main.css"
   )} file contains another rule than an import rule.
@@ -299,6 +299,13 @@ function shouldHaveOnlyImports(node) {
 }
 
 //  HELPERS:
+
+/*
+  The first line in every error message is the line number
+*/
+function printLineNumber(node) {
+  return colors.underline(`on line ${node.loc.start.line}:`);
+}
 
 /*
   Takes the file name (which is written with CamelCase)

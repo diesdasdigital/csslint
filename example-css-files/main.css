@@ -1,6 +1,5 @@
-/* 
-    Each of the following should throw an error. 
-*/
+@import "./example.css";
+@import "./example2.css";
 
 .main__element {
   border: "1";
