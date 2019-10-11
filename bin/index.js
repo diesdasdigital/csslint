@@ -148,6 +148,7 @@ function findLintErrors(fileName, fileContent) {
       maybeAddError(checkIfAnimationStartsWithComponentName(fileName, node));
       maybeAddError(checkIfUsesTypeSelector(nodeContext, node, item));
       maybeAddError(checkIfHasImports(fileName, node));
+      maybeAddError(checkIfHasOnlyImports(fileName, node));
     }
   });
 
@@ -274,6 +275,20 @@ function checkIfHasImports(fileName, node) {
   It also improves the site’s performance, 
   since the browser only needs to load one file 
   to know which files it needs to load afterwards.`;
+  }
+  return "no error";
+}
+
+/*
+    In main.css, only import rules are allowed.
+*/
+function checkIfHasOnlyImports(fileName, node) {
+  if (fileName === "main" && node.name !== "import") {
+    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+  Your ${colors.blue(
+    "main.css"
+  )} file contains another rule than an import rule.
+  ${colors.blue("main.css")} can only contain import rules and comments.`;
   }
   return "no error";
 }

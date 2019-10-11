@@ -1,0 +1,7 @@
+/* 
+    Each of the following should throw an error. 
+*/
+
+.main__element {
+  border: "1";
+}
