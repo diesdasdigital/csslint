@@ -248,8 +248,7 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
 }
 
 /*
-    Type selectors (like "div", "ul", "li", ...) are only allowed
-      if they appear on the right hand side of a child combinator (like "my--form__list > li")
+    Type selectors (like "div", "ul", "li", ...) are not allowed.
 */
 function checkIfUsesTypeSelector(nodeContext, node) {
   if (node.type === "TypeSelector" && nodeContext.atrule === null) {
@@ -261,12 +260,11 @@ function checkIfUsesTypeSelector(nodeContext, node) {
 }
 
 /*
-    All imports are disallowed except for main.css
+    Imports are only allowed in main.css
 */
 function checkIfHasImports(fileName, node) {
   if (fileName !== "main" && node.type === "Atrule" && node.name === "import") {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
-  There is an import rule.
   Imports are only allowed in main.css.
   Having all imports in one file guarantees 
   that there is only one place in the project
