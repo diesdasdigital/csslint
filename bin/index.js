@@ -142,13 +142,18 @@ function findLintErrors(fileName, fileContent) {
       // eslint-disable-next-line no-invalid-this
       const nodeContext = this;
 
-      maybeAddError(shouldUseIdSelector(node));
-      maybeAddError(shouldNotBeNestedMoreThanOnce(node));
-      maybeAddError(shouldStartWithComponentName(fileName, node));
-      maybeAddError(animationShouldStartWithComponentName(fileName, node));
-      maybeAddError(shouldNotUseTypeSelector(nodeContext, node, item));
-      maybeAddError(shouldNotHaveImports(fileName, node));
-      maybeAddError(shouldHaveOnlyImports(fileName, node));
+      if (fileName === "main") {
+        maybeAddError(shouldHaveOnlyImports(node));
+      }
+
+      if (fileName !== "main") {
+        maybeAddError(shouldNotHaveImports(node));
+        maybeAddError(shouldNotUseIdSelector(node));
+        maybeAddError(classNameShouldNotBeNestedMoreThanOnce(node));
+        maybeAddError(classNameShouldStartWithComponentName(fileName, node));
+        maybeAddError(animationShouldStartWithComponentName(fileName, node));
+        maybeAddError(shouldNotUseTypeSelector(nodeContext, node, item));
+      }
     }
   });
 
@@ -175,7 +180,7 @@ function getIndicesOfIgnoredLines(fileContent) {
 /*
     Id selectors are not allowed.
 */
-function shouldUseIdSelector(node) {
+function shouldNotUseIdSelector(node) {
   if (node.type === "IdSelector") {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   There is an id selector ${colors.red(`#${node.name}`)}
@@ -189,7 +194,7 @@ function shouldUseIdSelector(node) {
     Nesting elements to blocks is not allowed.
     For example, the class name ".block__one__two" is ill-formed.
 */
-function shouldNotBeNestedMoreThanOnce(node) {
+function classNameShouldNotBeNestedMoreThanOnce(node) {
   if (
     node.type === "ClassSelector" &&
     containsDoubleLowDashMoreThanOnce(node.name)
@@ -205,7 +210,7 @@ function shouldNotBeNestedMoreThanOnce(node) {
     Class names should start with file name.
     For example, every class name in the file "SearchField.css" should start with "search-field"
 */
-function shouldStartWithComponentName(fileName, node) {
+function classNameShouldStartWithComponentName(fileName, node) {
   const componentName = toComponentName(fileName);
 
   if (
@@ -264,8 +269,8 @@ function shouldNotUseTypeSelector(nodeContext, node) {
 /*
     All imports are disallowed except for main.css
 */
-function shouldNotHaveImports(fileName, node) {
-  if (fileName !== "main" && node.type === "Atrule" && node.name === "import") {
+function shouldNotHaveImports(node) {
+  if (node.type === "Atrule" && node.name === "import") {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   There is an import rule.
   Imports are only allowed in main.css.
@@ -282,8 +287,8 @@ function shouldNotHaveImports(fileName, node) {
 /*
     In main.css, only import rules are allowed.
 */
-function shouldHaveOnlyImports(fileName, node) {
-  if (fileName === "main" && node.name !== "import") {
+function shouldHaveOnlyImports(node) {
+  if (node.name !== "import") {
     return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
   Your ${colors.blue(
     "main.css"
