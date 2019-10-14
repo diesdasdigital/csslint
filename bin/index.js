@@ -125,7 +125,7 @@ function findLintErrors(fileName, fileContent) {
     positions: true
   });
 
-  // console.log(JSON.stringify(ast, null, 2));
+  // console.log(ast);
 
   const indicesOfIgnoredLines = getIndicesOfIgnoredLines(fileContent);
 
@@ -137,19 +137,27 @@ function findLintErrors(fileName, fileContent) {
     }
   }
 
-  csstree.walk(ast, function(node, item) {
-    if (node.loc && !indicesOfIgnoredLines.includes(node.loc.start.line)) {
-      // eslint-disable-next-line no-invalid-this
-      const nodeContext = this;
+  if (fileName === "main") {
+    ast.children.forEach(node => {
+      maybeAddError(shouldHaveOnlyImports(node));
+    });
+  }
 
-      maybeAddError(checkIfUsesIdSelector(node));
-      maybeAddError(checkIfNestedMoreThanOnce(node));
-      maybeAddError(checkIfStartsWithComponentName(fileName, node));
-      maybeAddError(checkIfAnimationStartsWithComponentName(fileName, node));
-      maybeAddError(checkIfUsesTypeSelector(nodeContext, node, item));
-      maybeAddError(checkIfHasImports(fileName, node));
-    }
-  });
+  if (fileName !== "main") {
+    csstree.walk(ast, function(node, item) {
+      if (node.loc && !indicesOfIgnoredLines.includes(node.loc.start.line)) {
+        // eslint-disable-next-line no-invalid-this
+        const nodeContext = this;
+
+        maybeAddError(shouldNotHaveImports(node));
+        maybeAddError(shouldNotUseIdSelector(node));
+        maybeAddError(classNameShouldNotBeNestedMoreThanOnce(node));
+        maybeAddError(classNameShouldStartWithComponentName(fileName, node));
+        maybeAddError(animationShouldStartWithComponentName(fileName, node));
+        maybeAddError(shouldNotUseTypeSelector(nodeContext, node, item));
+      }
+    });
+  }
 
   return lintErrors;
 }
@@ -174,9 +182,9 @@ function getIndicesOfIgnoredLines(fileContent) {
 /*
     Id selectors are not allowed.
 */
-function checkIfUsesIdSelector(node) {
+function shouldNotUseIdSelector(node) {
   if (node.type === "IdSelector") {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+    return `  ${printLineNumber(node)}
   There is an id selector ${colors.red(`#${node.name}`)}
   Please use a class instead.`;
   }
@@ -188,12 +196,12 @@ function checkIfUsesIdSelector(node) {
     Nesting elements to blocks is not allowed.
     For example, the class name ".block__one__two" is ill-formed.
 */
-function checkIfNestedMoreThanOnce(node) {
+function classNameShouldNotBeNestedMoreThanOnce(node) {
   if (
     node.type === "ClassSelector" &&
     containsDoubleLowDashMoreThanOnce(node.name)
   ) {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+    return `  ${printLineNumber(node)}
   The class name ${colors.red(`.${node.name}`)} is nested more than once`;
   }
 
@@ -204,7 +212,7 @@ function checkIfNestedMoreThanOnce(node) {
     Class names should start with file name.
     For example, every class name in the file "SearchField.css" should start with "search-field"
 */
-function checkIfStartsWithComponentName(fileName, node) {
+function classNameShouldStartWithComponentName(fileName, node) {
   const componentName = toComponentName(fileName);
 
   if (
@@ -213,7 +221,7 @@ function checkIfStartsWithComponentName(fileName, node) {
     !node.name.startsWith(`${componentName}--`) &&
     !node.name.startsWith(`${componentName}__`)
   ) {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+    return `  ${printLineNumber(node)}
   The class name ${colors.red(`.${node.name}`)}
   does not start with the component name.
   The name of the file is ${colors.blue(fileName)}.
@@ -229,14 +237,14 @@ function checkIfStartsWithComponentName(fileName, node) {
     Animation names start with the component name.
     For example, every animation name in the file "SearchField.css" should start with "search-field__"
 */
-function checkIfAnimationStartsWithComponentName(fileName, node) {
+function animationShouldStartWithComponentName(fileName, node) {
   const componentName = toComponentName(fileName);
 
   if (node.type === "Atrule" && node.name === "keyframes") {
     const animationName = node.prelude.children.first().name;
 
     if (!animationName.startsWith(`${componentName}__`)) {
-      return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+      return `  ${printLineNumber(node)}
   The animation name ${colors.red(animationName)}
   does not start with the component name.
   The name of the file is ${colors.blue(fileName)}.
@@ -250,9 +258,9 @@ function checkIfAnimationStartsWithComponentName(fileName, node) {
 /*
     Type selectors (like "div", "ul", "li", ...) are not allowed.
 */
-function checkIfUsesTypeSelector(nodeContext, node) {
+function shouldNotUseTypeSelector(nodeContext, node) {
   if (node.type === "TypeSelector" && nodeContext.atrule === null) {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+    return `  ${printLineNumber(node)}
   There is a type selector ${colors.red(node.name)}`;
   }
 
@@ -262,9 +270,9 @@ function checkIfUsesTypeSelector(nodeContext, node) {
 /*
     Imports are only allowed in main.css
 */
-function checkIfHasImports(fileName, node) {
-  if (fileName !== "main" && node.type === "Atrule" && node.name === "import") {
-    return `  ${colors.underline(`on line ${node.loc.start.line}:`)}
+function shouldNotHaveImports(node) {
+  if (node.type === "Atrule" && node.name === "import") {
+    return `  ${printLineNumber(node)}
   Imports are only allowed in main.css.
   Having all imports in one file guarantees 
   that there is only one place in the project
@@ -276,7 +284,28 @@ function checkIfHasImports(fileName, node) {
   return "no error";
 }
 
+/*
+    In main.css, only import rules are allowed.
+*/
+function shouldHaveOnlyImports(node) {
+  if (!node.name || node.name !== "import") {
+    return `  ${printLineNumber(node)}
+  Your ${colors.blue(
+    "main.css"
+  )} file contains another rule than an import rule.
+  ${colors.blue("main.css")} can only contain import rules and comments.`;
+  }
+  return "no error";
+}
+
 //  HELPERS:
+
+/*
+  The first line in every error message is the line number
+*/
+function printLineNumber(node) {
+  return colors.underline(`on line ${node.loc.start.line}:`);
+}
 
 /*
   Takes the file name (which is written with CamelCase)

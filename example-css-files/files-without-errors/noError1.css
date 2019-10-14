@@ -11,10 +11,6 @@
   border: "1";
 }
 
-.no-error1__list > li {
-  border: "1";
-}
-
 /* csslint-disable-next-line */
 .this-error-should-be-ignored {
   border: "1";
