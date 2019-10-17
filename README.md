@@ -89,6 +89,10 @@ If you want to create PR, we test and develop this tool using these as a baselin
 - [`node`](https://nodejs.org/en/) (we recommend installing it via [nvm](https://github.com/creationix/nvm))
 - [`yarn`](https://yarnpkg.com)
 
+## License
+
+MIT
+
 ---
 
 Created by [diesdas.digital](https://diesdas.digital)
