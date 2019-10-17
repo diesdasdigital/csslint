@@ -10,7 +10,7 @@ In any software system relying on context creates complexity. If one needs to kn
 
 CSS in JS tools solve that problem by using inline styles and/or generating class names automatically during a build step. This way developers cannot unintentionally override other components classes, because they don’t even know what the class name will be.
 
-The downsides if CSS in JS solutions are:
+The downsides of CSS in JS solutions are:
 
 - one needs a build step to generate CSS
 - some tools require writing CSS in a non-standard way (as objects for example)
@@ -88,6 +88,10 @@ If you want to create PR, we test and develop this tool using these as a baselin
 - macOS
 - [`node`](https://nodejs.org/en/) (we recommend installing it via [nvm](https://github.com/creationix/nvm))
 - [`yarn`](https://yarnpkg.com)
+
+## License
+
+MIT
 
 ---
 

@@ -12,7 +12,7 @@
   "engineStrict": true,
   "repository": "https://github.com/diesdasdigital/csslint",
   "author": "diesdas.digital",
-  "license": "none",
+  "license": "MIT",
   "scripts": {
     "pre-push": "yarn -s lint",
     "start": "node ./bin/index.js",
