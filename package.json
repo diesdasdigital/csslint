@@ -1,6 +1,6 @@
 {
   "name": "@diesdasdigital/csslint",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Linter for our CSS architecture",
   "main": "./bin/index.js",
   "bin": {
