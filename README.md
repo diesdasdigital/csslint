@@ -86,7 +86,7 @@ Alternatively you can ignore a single line inside of a file by writing the follo
 If you want to create PR, we test and develop this tool using these as a baseline:
 
 - macOS
-- [`node`](https://nodejs.org/en/) (we recommend installing it via [nvm](https://github.com/creationix/nvm))
+- [`node`](https://nodejs.org/en/) (we recommend installing it via [fnm](https://github.com/Schniz/fnm))
 - [`yarn`](https://yarnpkg.com)
 
 ## License
