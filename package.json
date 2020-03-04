@@ -26,7 +26,7 @@
     "css-tree": "^1.0.0-alpha.34",
     "glob": "^7.1.4",
     "path": "^0.12.7",
-    "yargs": "^14.0.0"
+    "yargs": "^15.1.0"
   },
   "devDependencies": {
     "captain-git-hook": "^2.0.0",
