@@ -30,15 +30,15 @@ Therefore we came up with a CSS architecture which has one major and a few minor
 
 1️⃣ Generic knowledge
 
-CSS syntax is a standard. Learn it once.
+CSS syntax is a standard. You only need to learn it once.
 
 2️⃣ Meaningful class names
 
-Even in production we have meaningful class names which helps when we need to debug.
+There are meaningful class names in production which makes debugging super fast.
 
 3️⃣ No build step
 
-Every browser knows how to load CSS.
+Every browser knows how to load CSS efficiently.
 
 ![Screenshot of error messages](diesdas-css-linter-screenshot.png)
 
