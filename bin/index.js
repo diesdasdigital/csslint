@@ -8,11 +8,11 @@ const glob = require("glob");
 const argv = require("yargs")
   .option("all", {
     type: "boolean",
-    description: "Don't exit on error until all files are checked"
+    description: "Don't exit on error until all files are checked",
   })
   .option("verbose", {
     type: "boolean",
-    description: "Run with verbose logging"
+    description: "Run with verbose logging",
   })
   .showHelpOnFail(true)
   .demandCommand()
@@ -26,8 +26,8 @@ function getFilePathsToIgnore() {
     return fs
       .readFileSync(".csslintignore", "utf8")
       .split("\n")
-      .map(lineContent => lineContent.trim())
-      .filter(trimmedLineContent => trimmedLineContent !== "");
+      .map((lineContent) => lineContent.trim())
+      .filter((trimmedLineContent) => trimmedLineContent !== "");
   } catch (error) {
     return [];
   }
@@ -42,17 +42,17 @@ glob(argv._[0], null, (error, matchedFilePaths) => {
   }
 
   const filePathsToLint = matchedFilePaths.filter(
-    filePath => !filePathsToIgnore.includes(filePath)
+    (filePath) => !filePathsToIgnore.includes(filePath)
   );
 
   if (argv.all) {
-    const filePathsWithErrors = filePathsToLint.map(filePath => ({
+    const filePathsWithErrors = filePathsToLint.map((filePath) => ({
       filePath,
-      errors: lint(filePath)
+      errors: lint(filePath),
     }));
 
     const numberOFFilesThatHaveErrors = filePathsWithErrors.filter(
-      fileWithErrors => fileWithErrors.errors.length > 0
+      (fileWithErrors) => fileWithErrors.errors.length > 0
     ).length;
 
     const totalNumberOfErrors = filePathsWithErrors.reduce(
@@ -122,7 +122,7 @@ function lint(filePath) {
 
 function findLintErrors(fileName, fileContent) {
   const ast = csstree.parse(fileContent, {
-    positions: true
+    positions: true,
   });
 
   // console.log(ast);
@@ -138,13 +138,13 @@ function findLintErrors(fileName, fileContent) {
   }
 
   if (fileName === "main") {
-    ast.children.forEach(node => {
+    ast.children.forEach((node) => {
       maybeAddError(shouldHaveOnlyImports(node));
     });
   }
 
   if (fileName !== "main") {
-    csstree.walk(ast, function(node, item) {
+    csstree.walk(ast, function (node, item) {
       if (node.loc && !indicesOfIgnoredLines.includes(node.loc.start.line)) {
         // eslint-disable-next-line no-invalid-this
         const nodeContext = this;
@@ -274,11 +274,11 @@ function shouldNotHaveImports(node) {
   if (node.type === "Atrule" && node.name === "import") {
     return `  ${printLineNumber(node)}
   Imports are only allowed in main.css.
-  Having all imports in one file guarantees 
+  Having all imports in one file guarantees
   that there is only one place in the project
-  to see which CSS files are loaded. 
-  It also improves the site’s performance, 
-  since the browser only needs to load one file 
+  to see which CSS files are loaded.
+  It also improves the site’s performance,
+  since the browser only needs to load one file
   to know which files it needs to load afterwards.`;
   }
   return "no error";
