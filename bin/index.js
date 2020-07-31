@@ -8,11 +8,11 @@ const glob = require("glob");
 const argv = require("yargs")
   .option("all", {
     type: "boolean",
-    description: "Don't exit on error until all files are checked"
+    description: "Don't exit on error until all files are checked",
   })
   .option("verbose", {
     type: "boolean",
-    description: "Run with verbose logging"
+    description: "Run with verbose logging",
   })
   .showHelpOnFail(true)
   .demandCommand()
@@ -48,7 +48,7 @@ glob(argv._[0], null, (error, matchedFilePaths) => {
   if (argv.all) {
     const filePathsWithErrors = filePathsToLint.map((filePath) => ({
       filePath,
-      errors: lint(filePath)
+      errors: lint(filePath),
     }));
 
     const numberOFFilesThatHaveErrors = filePathsWithErrors.filter(
@@ -122,7 +122,7 @@ function lint(filePath) {
 
 function findLintErrors(fileName, fileContent) {
   const ast = csstree.parse(fileContent, {
-    positions: true
+    positions: true,
   });
 
   // console.log(ast);
