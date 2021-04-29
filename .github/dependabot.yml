@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "10:00"
+    timezone: Europe/Berlin
+  open-pull-requests-limit: 10
+  versioning-strategy: lockfile-only
+  ignore:
+  - dependency-name: stylelint
+    versions:
+    - 13.8.0
+    - 13.9.0
+  - dependency-name: eslint
+    versions:
+    - 7.16.0
+    - 7.19.0
